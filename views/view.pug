@@ -26,7 +26,7 @@ html
 					h2.tituloSecundario Construcción y Reparación de Galpones, Techos y Tinglados
 
 			.row
-				.col-md-8 Carrusel
+				.col-md-8
 
 					#carrusel.carousel.slide(data-ride='carousel')
 						// Indicators
@@ -34,17 +34,36 @@ html
 							li.active(data-target='#carrusel-generic', data-slide-to='0')
 							li(data-target='#carrusel-generic', data-slide-to='1')
 							li(data-target='#carrusel-generic', data-slide-to='2')
+							li(data-target='#carrusel-generic', data-slide-to='3')
+							li(data-target='#carrusel-generic', data-slide-to='4')
+							li(data-target='#carrusel-generic', data-slide-to='5')
 						// Wrapper for slides
 						.carousel-inner(role='listbox')
 							.item.active
-								img(src='...', alt='...')
+								img(src='images/carrusel/1.jpg', alt='...')
 								.carousel-caption
 									| ...
 							.item
-								img(src='...', alt='...')
+								img(src='images/carrusel/2.jpg', alt='...')
 								.carousel-caption
 									| ...
 							|     ...
+							.item
+								img(src='images/carrusel/3.jpg', alt='...')
+								.carousel-caption
+									| ...
+							|     ...
+							.item
+								img(src='images/carrusel/4.jpg', alt='...')
+								.carousel-caption
+									| ...
+							|     ...
+							.item
+								img(src='images/carrusel/5.jpg', alt='...')
+								.carousel-caption
+									| ...
+							|     ...
+
 						// Controls
 						a.left.carousel-control(href='#carrusel-generic', role='button', data-slide='prev')
 							span.glyphicon.glyphicon-chevron-left(aria-hidden='true')
@@ -54,7 +73,7 @@ html
 							span.sr-only Siguiente
 
 				.col-md-4(style='min-height:485px; padding: 0px 0px 0px 0px; overflow: hidden;')
-				
+
 					.mast__form
 						div(style='display: inline-block; position: relative; width: 100%;')
 							.tituloFormulario Complete el formulario por presupuestos. Nos contactaremos a la brevedad.
