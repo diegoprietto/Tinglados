@@ -1,0 +1,61 @@
+doctype html
+html
+	head
+		title="Hello Pug"
+
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
+
+		link(href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css", rel="stylesheet", integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u", crossorigin="anonymous")
+
+		script(src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js", integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa", crossorigin="anonymous")
+
+		link(href="css/styles.css", rel="stylesheet")
+
+	body
+		div.cabecera
+			div.row
+				div.col-sm-6
+					img(src="images/logo.png", alt="Logo")
+				div.col-sm-6.textoSupIzquierdo
+					|Esteban Ignacio Fernández
+			div.row
+				div.col-xs-12
+					h1.tituloPrincipal Estructuras Metálicas
+					h2.tituloSecundario Construcción y Reparación de Galpones, Techos y Tinglados
+
+			.row
+				.col-md-8 Carrusel
+				.col-md-4(style='min-height:485px; padding: 0px 0px 0px 0px; overflow: hidden;')
+					.mast__form
+						div(style='display: inline-block; position: relative; width: 100%;')
+							.tituloFormulario Complete el formulario por presupuestos. Nos contactaremos a la brevedad.
+							form#contact-form.form-horizontal.cuerpoFormulario(method='POST', action='mailto:pepe@pepe.pepe', accept-charset='UTF-8', autocomplete='off', rel='nofollow')
+								input(type='hidden', name='_token', value='sWUb6Gq4oi38vjNONW8y1JDU7zh8CjBg5dKz89No')
+								.form-group
+									label(for='first_name') Nombre
+									input#first_name.form-control(placeholder='Nombre', name='first_name', type='text')
+								.form-group
+									label(for='last_name') Apellido
+									input#last_name.form-control(placeholder='Apellido', name='last_name', type='text')
+								.form-group
+									label(for='email') Email
+									input#email.form-control(placeholder='Email', name='email', type='text')
+								.form-group
+									label(for='phone_number') Teléfono
+									input#area_code.form-control.form-collapsable-input(size='3', maxlength='5', placeholder='Cód.', name='area_code', type='text')
+									span.som-tooltip.tooltip-effect-1
+										span.tooltip-item(style='color: white')
+											i.fa.fa-question-circle
+										span.tooltip-content.clearfix
+											span.tooltip-text
+												strong Código de Área
+												|  Ej: +5411
+									input#phone_number.form-control.form-extensible-input.form-extensible-input--right-floated.form-extensible-input--7_5em(maxlength='12', size='12', placeholder='Teléfono', name='phone_number', type='text')
+								.form-group
+									label(for='message') Mensaje
+									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message')
+								.form-group
+									button#btnSubmit.btn.btn-default.input-block-level.primaryColor(type='submit', style='background-color: #ff8000 !important;') ENVIAR
+								.form-group
+									#container-flash-message.flash-message
+								input#landing_code.form-control(type='hidden', name='landing_code', value='3358ceab66b1ec49c6f127f1a6deee5e')
