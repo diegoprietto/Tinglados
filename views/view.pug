@@ -11,6 +11,8 @@ html
 
 		link(href="css/styles.css", rel="stylesheet")
 
+		link(href="font-awesome-4.7.0/css/font-awesome.min.css", rel="stylesheet")
+
 	body
 		div.cabecera
 			div.row
@@ -29,7 +31,7 @@ html
 					.mast__form
 						div(style='display: inline-block; position: relative; width: 100%;')
 							.tituloFormulario Complete el formulario por presupuestos. Nos contactaremos a la brevedad.
-							form#contact-form.form-horizontal.cuerpoFormulario(method='POST', action='mailto:pepe@pepe.pepe', accept-charset='UTF-8', autocomplete='off', rel='nofollow')
+							form.form-horizontal.cuerpoFormulario(method='POST', action='mailto:pepe@pepe.pepe', accept-charset='UTF-8', rel='nofollow')
 								input(type='hidden', name='_token', value='sWUb6Gq4oi38vjNONW8y1JDU7zh8CjBg5dKz89No')
 								.form-group
 									label(for='first_name') Nombre
@@ -39,18 +41,16 @@ html
 									input#last_name.form-control(placeholder='Apellido', name='last_name', type='text')
 								.form-group
 									label(for='email') Email
-									input#email.form-control(placeholder='Email', name='email', type='text')
+									.col-sm-12
+										input#email.form-control(placeholder='Email', name='email', type='text')
 								.form-group
-									label(for='phone_number') Teléfono
-									input#area_code.form-control.form-collapsable-input(size='3', maxlength='5', placeholder='Cód.', name='area_code', type='text')
-									span.som-tooltip.tooltip-effect-1
-										span.tooltip-item(style='color: white')
-											i.fa.fa-question-circle
-										span.tooltip-content.clearfix
-											span.tooltip-text
-												strong Código de Área
-												|  Ej: +5411
-									input#phone_number.form-control.form-extensible-input.form-extensible-input--right-floated.form-extensible-input--7_5em(maxlength='12', size='12', placeholder='Teléfono', name='phone_number', type='text')
+									label.col-sm-12(for='phone_number') Teléfono
+									.col-sm-4
+										input#area_code.form-control(size='3', maxlength='5', placeholder='Cód.', name='area_code', type='text')
+									.col-sm-1
+										i.fa.fa-question-circle.infoCodigoArea(aria-hidden="true")
+									.col-sm-7
+										input#phone_number.form-control(maxlength='12', placeholder='Teléfono', name='phone_number', type='text')
 								.form-group
 									label(for='message') Mensaje
 									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message')
