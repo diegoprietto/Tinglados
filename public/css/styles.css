@@ -95,3 +95,17 @@
 	vertical-align: center;
 	padding-top: 3px;
 }
+
+.contenedorLLamar{
+	background-color: #2c363d;
+	color: white;
+	font-size: 2em;
+	text-align: center;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.botonLlamar{
+	font-weight: bold;
+	margin-top: 10px;
+}

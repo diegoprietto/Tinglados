@@ -1,7 +1,7 @@
 doctype html
 html
 	head
-		title="Hello Pug"
+		title="Tinglados"
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
 
@@ -14,6 +14,8 @@ html
 		link(href="css/styles.css", rel="stylesheet")
 		
 		script(src="scripts/main.js")
+
+		link(rel='shortcut icon', type='image/x-icon', href='/images/favicon.ico')
 
 	body
 		.cabecera
@@ -133,4 +135,9 @@ html
 								h4.media-heading EFICACIA
 								|Brindamos una respuesta ágil y eficaz a las urgencias de reparaciones y necesidades de mantenimiento.
 				.col-sm-4
-					|LLamar
+					.contenedorLLamar
+						i.fa.fa-phone-square(style="display:block")
+						button.btn.btn-warning.botonLlamar(type="button")
+							i.fa.fa-phone(style="margin-right: 5px")
+							|Click aquí para llamar
+							
