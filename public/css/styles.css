@@ -71,3 +71,27 @@
 	margin-top: 17.5px;
 	margin-bottom: : 17.5px;
 }
+
+#carrusel{
+	overflow-y: hidden;
+	width: auto;
+}
+
+.botonesFlotantes{
+	position: absolute;
+	top: 25px;
+	left: 40px;
+	z-index: 1
+}
+
+.botonFlotante{
+	background-color: #192561;
+	width: 48px;
+	height: 48px;
+	margin-bottom: 5px;
+	color: white;
+	font-size: 2em;
+	text-align: center;
+	vertical-align: center;
+	padding-top: 3px;
+}
