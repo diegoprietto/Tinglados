@@ -14,14 +14,14 @@ html
 		link(href="font-awesome-4.7.0/css/font-awesome.min.css", rel="stylesheet")
 
 	body
-		div.cabecera
-			div.row
-				div.col-sm-6
+		.cabecera
+			.row
+				.col-sm-6
 					img(src="images/logo.png", alt="Logo")
-				div.col-sm-6.textoSupIzquierdo
+				.col-sm-6.textoSupIzquierdo
 					|Esteban Ignacio Fernández
-			div.row
-				div.col-xs-12
+			.row
+				.col-xs-12
 					h1.tituloPrincipal Estructuras Metálicas
 					h2.tituloSecundario Construcción y Reparación de Galpones, Techos y Tinglados
 
@@ -40,29 +40,25 @@ html
 						// Wrapper for slides
 						.carousel-inner(role='listbox')
 							.item.active
-								img(src='images/carrusel/1.jpg', alt='...')
+								img(style="", src='images/carrusel/1.jpg', alt='...')
 								.carousel-caption
-									| ...
+									| Foto 1
 							.item
 								img(src='images/carrusel/2.jpg', alt='...')
 								.carousel-caption
-									| ...
-							|     ...
+									| Foto 2
 							.item
 								img(src='images/carrusel/3.jpg', alt='...')
 								.carousel-caption
-									| ...
-							|     ...
+									| Foto 3
 							.item
 								img(src='images/carrusel/4.jpg', alt='...')
 								.carousel-caption
-									| ...
-							|     ...
+									| Foto 4
 							.item
 								img(src='images/carrusel/5.jpg', alt='...')
 								.carousel-caption
-									| ...
-							|     ...
+									| Foto 5
 
 						// Controls
 						a.left.carousel-control(href='#carrusel-generic', role='button', data-slide='prev')
@@ -109,3 +105,13 @@ html
 								.form-group
 									.col-sm-12
 										#container-flash-message.flash-message
+
+		.franjaAzul Desde 1974 al Servicio de Nuestros Clientes
+
+		.franjaInferior
+			.row
+				.col-sm-6
+					|Texto
+				.col-sm-4
+					|LLamar
+

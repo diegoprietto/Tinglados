@@ -53,3 +53,21 @@
 	width: 100%;
 	font-weight: bold;
 }
+
+.franjaAzul{
+	background-color: #192561;
+	text-align: center;
+	width: 100%;
+	padding: 15px 15px 15px 15px;
+	font-weight: bold;
+	color: white;
+	font-size: 25px
+}
+
+.franjaInferior{
+	background-color: #e4dede;
+	width: 100%;
+	padding: 15px 15px 15px 15px;
+	margin-top: 17.5px;
+	margin-bottom: : 17.5px;
+}
