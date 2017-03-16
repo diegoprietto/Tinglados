@@ -12,6 +12,14 @@ app.get('/template', function(req, res){
     res.render('view');
 });
 
+//Ajax: Telefono
+app.get('/getTel', function(req, res){
+	console.log("Acceso a función Ajax getTel");
+
+	res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ t1: '4321', t2: '-0000' }));
+});
+
 //Cualquier url que no existente
 app.all('/*', function (req, res) {
    res.send('Has ingresado una url inexistente <img src="prohibido.png">');
