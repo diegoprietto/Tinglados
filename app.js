@@ -1,6 +1,9 @@
 var express = require('express');
 var app = express();
 
+//Definición de puerto
+app.set('port', (process.env.PORT || 5000));
+
 //Archivos públicos
 app.use(express.static('public'));
 
@@ -26,7 +29,7 @@ app.all('/*', function (req, res) {
    console.log("Acceso a url inexistente");
 })
 
-var server = app.listen(8081, function () {
+var server = app.listen(app.get('port'), function () {
 
    var host = server.address().address
    var port = server.address().port
