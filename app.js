@@ -1,7 +1,13 @@
 var express = require('express');
 var app = express();
+var Qux = require('./AccesoArchivos.js').Qux;
+var qux = new Qux();
+
 ////Conexión a Mongo
 //var MongoClient = require('mongodb').MongoClient;
+
+////Memoria cache
+var cache = null;
 
 //Definición de puerto
 app.set('port', (process.env.PORT || 5000));
@@ -57,6 +63,60 @@ app.get('/', function(req, res){
 	});*/
 
 	res.render('view');
+});
+
+////TEST CACHE
+app.get('/setcache', function(req, res){
+  var hayDatos = (cache != null)
+  var texto;
+
+  if (hayDatos){
+    var cacheAnterior = cache;
+    cache += '*';
+    texto = 'La cache poseia estos datos ' + cacheAnterior + ', ahora contiene ' + cache;
+  }
+  else{
+    cache = '#';
+    texto = 'La cache estaba VACÍA, ahora contiene ' + cache;
+  }
+
+  res.send(texto);
+});
+
+////TEST CACHE ARCHIVO PLANO
+app.get('/setcachearc', function(req, res){
+  var datos = "Pirulo";
+
+  //Guardar texto en el archivo e informar
+  qux.almacenar(
+    () =>{
+      console.log('Error');
+
+      res.send("Se produjo un error al intentar escribir el archivo");
+    },
+    datos,
+    () => {
+      console.log('Exito');
+
+      res.send("Archivo actualizado!");
+    }
+  );
+});
+
+app.get('/getcachearc', function(req, res){
+
+  //Obtener datos
+  qux.obtener(
+    () =>{
+      console.log('Error');
+
+      res.send("Se produjo un error al intentar leer el archivo");
+    },
+    (data) => {
+      console.log('Exito');
+
+      res.send("Datos del archivo: " + data);
+  });
 });
 
 //Cualquier url que no existente
