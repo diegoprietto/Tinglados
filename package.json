@@ -6,17 +6,15 @@
     "node": "5.9.1"
   },
   "main": "app.js",
-  
-  "scripts": {		
-    "start": "node app.js"		
+  "scripts": {
+    "start": "node app.js"
   },
-
   "dependencies": {
+    "bootstrap": "^3.3.7",
     "express": "^4.14.1",
-    "pug": "^2.0.0-beta11",
-    "bootstrap": "^3.3.7"
+    "mongodb": "^2.2.25",
+    "pug": "^2.0.0-beta11"
   },
-
   "repository": {
     "type": "git",
     "url": "git+https://github.com/diegoprietto/Tinglados.git"
@@ -26,7 +24,6 @@
     "heroku",
     "express"
   ],
-
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/diegoprietto/Tinglados/issues"
