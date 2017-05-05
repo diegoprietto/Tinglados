@@ -46,7 +46,7 @@ app.get('/getTel', function(req, res){
 //INICIO Server**************************************************************************************
 
 //Renderizar usando Pug
-app.get('/template', function(req, res){
+app.get('/', function(req, res){
 
 	/*//Obtener info de BD
 	MongoClient.connect(uri, function(err, db) {
