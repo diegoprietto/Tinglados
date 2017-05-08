@@ -1,13 +1,16 @@
 var express = require('express');
 var app = express();
+
 var Qux = require('./AccesoArchivos.js').Qux;
 var qux = new Qux();
 
-////Conexión a Mongo
-//var MongoClient = require('mongodb').MongoClient;
+var AccesoMongo = require('./AccesoMongo.js').Qux;
+var accesoMongo = new AccesoMongo();
 
-////Memoria cache
+
+////Memoria cache (TEST)
 var cache = null;
+
 
 //Definición de puerto
 app.set('port', (process.env.PORT || 5000));
@@ -18,7 +21,7 @@ app.use(express.static('public'));
 //Usar el paquete Pug para Templates
 app.set('view engine', 'pug');
 
-//Atributos
+////Atributos (TEST)
 //var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.net:27017,cluster0-shard-00-01-ngi72.mongodb.net:27017,cluster0-shard-00-02-ngi72.mongodb.net:27017/tinglado?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 
 //INICIO Funciones AJAX**************************************************************************************
@@ -54,15 +57,9 @@ app.get('/getTel', function(req, res){
 //Renderizar usando Pug
 app.get('/', function(req, res){
 
-	/*//Obtener info de BD
-	MongoClient.connect(uri, function(err, db) {
-	  	//Buscar todos los documentos
-		findDocuments(db, function() {
-		    db.close();
-		  });
-	});*/
-
-	res.render('view');
+  accesoMongo.obtenerInfo(null, function(data){
+    res.render('view', {info: data});
+  });
 });
 
 ////TEST CACHE

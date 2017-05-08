@@ -114,21 +114,16 @@ html
 				.col-sm-6
 					div(style="font-size: 30px; margin-bottom: 30px")
 						|¿Por Qué Elegirnos?
+					//Generado dinámicamente a partir de datos de BD
 					ul.media-list
-						li.media
-							.media-left
-								a(href='#')
-									i.fa.fa-check-circle-o
-							.media-body
-								h4.media-heading SERVICIO
-								|Ofrecemos servicio integral para fabricación y construcción de obras nuevas, todo tipo de ampliaciones y refacciones.
-						li.media
-							.media-left
-								a(href='#')
-									i.fa.fa-check-circle-o
-							.media-body
-								h4.media-heading EFICACIA
-								|Brindamos una respuesta ágil y eficaz a las urgencias de reparaciones y necesidades de mantenimiento.
+						each val in info
+							li.media
+								.media-left
+									a(href='#')
+										i.fa.fa-check-circle-o
+								.media-body
+									h4.media-heading #{val.Titulo}
+									|#{val.Cuerpo}
 				.col-sm-4
 					.contenedorLLamar
 						i.fa.fa-phone-square(style="display:block")
