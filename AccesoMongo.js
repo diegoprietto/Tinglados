@@ -12,10 +12,10 @@ Qux.prototype.log = function () {
 };
 
 //Devuelve el texto para la información del pié de página
-Qux.prototype.obtenerInfo = function (error, callback) {
+Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 	
 	//Verificar si estan los datos en caché
-	if (cacheColeccionInfo){
+	if (usarCache && cacheColeccionInfo){
 
 		console.log("Acierto en caché: Colección " + nombreColeccionInfo);
 		if (callback) callback(cacheColeccionInfo);
@@ -31,19 +31,35 @@ Qux.prototype.obtenerInfo = function (error, callback) {
 			}else{
 			  	//Buscar todos los documentos
 				var collection = db.collection(nombreColeccionInfo);
-				// Find some documents
-				collection.find({}).toArray(function(err, docs) {
 
-					if (err){
-						//Ocurrió un error
-						if (error) error();
-					}else{
-						console.log(docs)
-						//Actualizar caché
-						cacheColeccionInfo = docs;
-						if (callback) callback(docs);
-					}
-				});
+				// Find some documents
+				if (admin){
+					collection.find({}).toArray(function(err, docs) {
+
+						if (err){
+							//Ocurrió un error
+							if (error) error();
+						}else{
+							console.log(docs)
+
+							if (callback) callback(docs);
+						}
+					});
+				}else{
+					collection.find({Mostrar: "S"}).toArray(function(err, docs) {
+
+						if (err){
+							//Ocurrió un error
+							if (error) error();
+						}else{
+							console.log(docs)
+							//Actualizar caché
+							cacheColeccionInfo = docs;
+
+							if (callback) callback(docs);
+						}
+					});
+				}
 			}
 		});
 

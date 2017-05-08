@@ -1,0 +1,8 @@
+.CampoCuerpo{
+	font-weight: normal;
+	cursor: text;
+}
+
+.fa-toggle-on, .fa-toggle-off, .fa-trash, .fa-plus-circle{
+	cursor: pointer;
+}

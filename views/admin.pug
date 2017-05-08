@@ -5,3 +5,30 @@ block VistaLinks
 	link(href="css/admin.css", rel="stylesheet")
 
 block VistaCuerpo
+	#ContenedorInfo.row(style="padding-left: 15px")
+		.col-sm-6
+			div(style="font-size: 30px; margin-bottom: 30px")
+				|¿Por Qué Elegirnos?
+				button#BotonGuardarInfo.btn.btn-success.pull-right(type='button', disabled='disabled', onclick='GuardarInfo()')
+					|Guardar
+					span.fa.fa-floppy-o(style="margin-left: 5px")
+			//- Generado dinámicamente a partir de datos de BD
+			#ListaInfo.ul.media-list
+				each val in info
+					li.media.Documento
+						.media-left
+							span(style="color: #337ab7")
+								if (val.Mostrar=="S")
+									i.fa.fa-toggle-on.CampoMostrar(onclick='HabilitarInfo(this);')
+								else
+									i.fa.fa-toggle-off.CampoMostrar(onclick='HabilitarInfo(this);')
+							span(style="color: red")
+								i.fa.fa-trash(onclick='EliminarInfo(this);')
+						.media-body
+							h4.media-heading.CampoTitulo(contenteditable='true') #{val.Titulo}
+							label.CampoCuerpo(contenteditable='true') #{val.Cuerpo}
+			ul.media-list
+				li.media.Documento
+					.media-left
+						span(style="color: #22b511")
+							i.fa.fa-plus-circle(onclick='AgregarInfo();')
