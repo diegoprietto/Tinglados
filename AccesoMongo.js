@@ -98,6 +98,10 @@ Qux.prototype.guardarInfo = function(error, datos, callback) {
 							}else{
 								//Éxito
 								console.log("MongoDB: Colección Actualizada");
+
+        						//Resetear caché
+        						cacheColeccionInfo=null;
+
 								db.close();
 								callback(result);
 							}

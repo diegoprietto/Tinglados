@@ -34,50 +34,25 @@ html
 					#bs-example-navbar-collapse-1.collapse.navbar-collapse
 						ul.nav.navbar-nav
 							//- Lista de componentes dentro del menú
-							li.active
-								a(href='#')
-									| Link 
-									span.sr-only (current)
-							li
-								a(href='#') Link
 							li.dropdown
 								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-									| Dropdown 
+									| Información 
 									span.caret
 								ul.dropdown-menu
-									li
-										a(href='#') Action
-									li
-										a(href='#') Another action
-									li
-										a(href='#') Something else here
+									li(onclick='if (VisionInfo) VisionInfo();')
+										a(href='#') Actualizar información
 									li.divider(role='separator')
-									li
-										a(href='#') Separated link
-									li.divider(role='separator')
-									li
-										a(href='#') One more separated link
+									li(onclick='if (VisionFotos) VisionFotos();')
+										a(href='#') Actualizar fotos
 						form.navbar-form.navbar-left
-							.form-group
-								input.form-control(type='text', placeholder='Search')
-							button.btn.btn-default(type='submit') Submit
+							//- Controles Izquierda
 						ul.nav.navbar-nav.navbar-right
+							//- Controles Derecha
 							li
-								a(href='#') Link
-							li.dropdown
-								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-									| Dropdown 
-									span.caret
-								ul.dropdown-menu
-									li
-										a(href='#') Action
-									li
-										a(href='#') Another action
-									li
-										a(href='#') Something else here
-									li.divider(role='separator')
-									li
-										a(href='#') Separated link
+								a(href='/')
+									|Ir a Home
+									span.fa.fa-home(style="margin-left: 5px")
+
 					// /.navbar-collapse
 				// /.container-fluid
 		//- Espacio ocupado por el nav

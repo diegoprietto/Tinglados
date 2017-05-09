@@ -8,14 +8,17 @@ var estructuraDocumento = '	<li class="media Documento">\
 									</span>\
 								</div>\
 								<div class="media-body">\
-									<h4 class="media-heading CampoTitulo" contenteditable="true">Nuevo</h4>\
-									<label class="CampoCuerpo" contenteditable="true">Contenido</label>\
+									<h4 class="media-heading CampoTitulo" contenteditable="true" onblur="habilitarGuardadoInfo()">Nuevo</h4>\
+									<label class="CampoCuerpo" contenteditable="true" onblur="habilitarGuardadoInfo()">Contenido</label>\
 								</div>\
 							</li>';
 
 
 $(document).ready(function () {
-
+	//Contenedor de fotos desactivado
+	$("#ContenedorFotos").hide();
+	//Spin oculto inicialmente
+	$("#BotonGuardarInfo .fa-spinner").hide();
 });
 
 function AgregarInfo(){
@@ -26,6 +29,8 @@ function AgregarInfo(){
 }
 
 function HabilitarInfo(elemento){
+	habilitarGuardadoInfo();
+
 	if ($(elemento).hasClass("fa-toggle-on")){
 		$(elemento).removeClass("fa-toggle-on").addClass("fa-toggle-off");
 	}else{
@@ -38,6 +43,7 @@ function EliminarInfo(elemento){
 	var rta = confirm("¿Esta seguro que desea eliminar el registro " + titulo + "?\nUna vez guardado no se puede recuperar");
 
 	if (rta){
+		habilitarGuardadoInfo();
 		$(elemento).closest('.Documento').remove();
 	}
 }
@@ -47,6 +53,11 @@ function habilitarGuardadoInfo(){
 }
 
 function GuardarInfo(){
+	//Mostrar spinner y deshabilitar el botón
+	$("#BotonGuardarInfo").attr("disabled", "disabled");
+	$("#BotonGuardarInfo .fa-floppy-o").hide();
+	$("#BotonGuardarInfo .fa-spinner").show();
+
 	var datos = ObtenerDatosInfo();
 
 	$.ajax({
@@ -55,12 +66,23 @@ function GuardarInfo(){
 		url: "GuardarInfo",
 		data: JSON.stringify({ content: datos }),
 		success: function(response) { GuardarInfoOk(response); },
-		error: function(response) { console.log(response); }
+		error: function(response) { GuardarInfoError(response); }
 	});
 }
 
 function GuardarInfoOk(resultado){
-	$("#BotonGuardarInfo").attr("disabled", "disabled");
+	//Ocultar spinner
+	$("#BotonGuardarInfo .fa-floppy-o").show();
+	$("#BotonGuardarInfo .fa-spinner").hide();
+}
+
+function GuardarInfoError(resultado){
+	//Ocultar spinner y habilitar el botón
+	alert("Se produjo un error al intentar actualizar la información, vuelva a reintentar.");
+
+	$("#BotonGuardarInfo").removeAttr("disabled");
+	$("#BotonGuardarInfo .fa-floppy-o").show();
+	$("#BotonGuardarInfo .fa-spinner").hide();
 }
 
 function ObtenerDatosInfo(){
@@ -81,4 +103,14 @@ function ObtenerDatosInfo(){
 	});
 
 	return dataInfo;
+}
+
+function VisionInfo(){
+	$("#ContenedorFotos").hide();
+	$("#ContenedorInfo").show();
+}
+
+function VisionFotos(){
+	$("#ContenedorFotos").show();
+	$("#ContenedorInfo").hide();
 }
