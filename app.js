@@ -38,10 +38,36 @@ app.post('/GuardarInfo', function(req, res){
 
   console.log(req.body.content);
 
-  /////Guardar req.body.content en MongoDB
+  var datos = req.body.content;
 
-  res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({ Resultado: 'OK'}));
+  if (datos){
+
+    accesoMongo.guardarInfo(
+      function () {
+        console.log("Error al intentar actualizar la colección Info");
+
+        //Enviar un flag de Error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERROR'}));
+      },
+      datos,
+      function (result) {
+        console.log(result);
+
+        //Enviar un flag de éxito
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'OK'}));
+      }
+    );
+
+  }else{
+    //Sin datos de entrada
+    console.log("Sin datos");
+
+    //Enviar un flag de Error
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ Resultado: 'ERROR'}));
+  }
 });
 
 //FIN Funciones AJAX**************************************************************************************

@@ -1,7 +1,7 @@
 var estructuraDocumento = '	<li class="media Documento">\
 								<div class="media-left">\
 									<span style="color: #337ab7;">\
-										<i class="fa fa-toggle-on" onclick="HabilitarInfo(this);"></i>\
+										<i class="fa fa-toggle-on CampoMostrar" onclick="HabilitarInfo(this);"></i>\
 									</span>\
 									<span style="color: red;">\
 										<i class="fa fa-trash" onclick="EliminarInfo(this);"></i>\

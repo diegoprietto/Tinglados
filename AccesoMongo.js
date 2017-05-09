@@ -29,7 +29,7 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 				//Ocurrió un error
 				if (error) error();
 			}else{
-			  	//Buscar todos los documentos
+			  	//Referenciar a la colección
 				var collection = db.collection(nombreColeccionInfo);
 
 				// Find some documents
@@ -55,7 +55,7 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 							console.log(docs)
 							//Actualizar caché
 							cacheColeccionInfo = docs;
-
+							db.close();
 							if (callback) callback(docs);
 						}
 					});
@@ -64,6 +64,50 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 		});
 
 	}
+}
+
+Qux.prototype.guardarInfo = function(error, datos, callback) {
+
+	//Conectarse a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error();
+		}else{
+
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionInfo);
+
+			//Eliminar documentos previos
+			collection.drop(function(err, result) {
+
+				if (err){
+					//Ocurrió un error
+					if (error) error();
+				}else{
+
+					//Insertar documentos
+					collection.insertMany(
+						datos,
+						function(err, result) {
+
+							if (err){
+								//Ocurrió un error
+								if (error) error();
+							}else{
+								//Éxito
+								console.log("MongoDB: Colección Actualizada");
+								db.close();
+								callback(result);
+							}
+					});
+				}
+
+
+			});
+		}
+	});
 }
 
 exports.Qux = Qux;
