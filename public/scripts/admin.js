@@ -19,6 +19,12 @@ $(document).ready(function () {
 	$("#ContenedorFotos").hide();
 	//Spin oculto inicialmente
 	$("#BotonGuardarInfo .fa-spinner").hide();
+
+	//Asignar evento al control de carga de imagenes para procesar los archivos seleccionados
+	document.getElementById('files').addEventListener('change', CargarFoto, false);
+
+	//Cargar fotos dinámicamente
+	CargaInicialFotos();
 });
 
 function AgregarInfo(){
@@ -113,4 +119,116 @@ function VisionInfo(){
 function VisionFotos(){
 	$("#ContenedorFotos").show();
 	$("#ContenedorInfo").hide();
+}
+
+function CargarFoto(evt) {
+  
+    var files = evt.target.files; // FileList object
+     
+      //Obtenemos la imagen del campo "file". 
+    for (var i = 0, f; f = files[i]; i++) {         
+         //Solo admitimos imágenes.
+         if (!f.type.match('image.*')) {
+              continue;
+         }
+     
+         var reader = new FileReader();
+         
+         reader.onload = (function(theFile) {
+             return function(e) {
+             	// Creamos la imagen (idFoto es el ID con el que se guarda en la BD, inicialmente esta vacío hasta que se guarde correctamente)
+             	$("#list").append(['<div class="CampoFoto" idFoto="">\
+             		<div style="margin-top: 15px">\
+             			<span class="FotoEliminar" style="color: red; display: none;"><i class="fa fa-trash" onclick="EliminarFoto(this);"></i></span>\
+						<span class="FotoSpin" style="color: black; display: none;"><i class="fa fa-spinner fa-spin"></i>Cargando al servidor...</span>\
+						<span class="FotoCargar" style="color: red; cursor: pointer; display: block;" onclick="SubirFoto(this);"><i class="fa fa-upload"></i>Error, clic para volver a intentar...</span>\
+             		</div>\
+             		<img class="miniaturaFoto" src="', e.target.result,'" title="', escape(theFile.name), '"/> </div>'].join(''));
+
+             	//Cargamos en el server la nueva imagen
+             	SubirFotoIdFoto( $('#list div[idFoto=""]:last-child') );
+             };
+         })(f);
+
+         reader.readAsDataURL(f);
+     }
+}
+
+function EliminarFoto(elemento){
+	alert("En desarrollo");
+}
+
+//Recibe como parámetro el elemento span con clase FotoCargar, se tiene que buscar el div con el atributo idFoto
+function SubirFoto(elemento){
+	var elementoIdFoto = $(elemento).closest('div[idFoto=""]');
+
+	SubirFotoIdFoto(elementoIdFoto);
+}
+
+//Recibe como parámetro un selector JQuery que referencia al div que contiene el atributo idFoto
+//Esta función realiza una llamada Ajax que almacena la foto codificada en el servidor
+function SubirFotoIdFoto(elemento){
+	//Mostrar animación de cargando
+	elemento.find('.FotoEliminar').hide();
+	elemento.find('.FotoSpin').show();
+	elemento.find('.FotoCargar').hide();
+
+	var dataFoto = elemento.find('.miniaturaFoto').attr("src");
+
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		url: "GuardarFoto",
+		data: JSON.stringify({ content: dataFoto }),
+		success: function(response) { GuardarFotoOk(response, elemento); },
+		error: function(response) { GuardarFotoError(response, elemento); }
+	});
+}
+
+function GuardarFotoOk(response, elemento){
+	//Mostrar el botón de eliminar
+	elemento.find('.FotoEliminar').show();
+	elemento.find('.FotoSpin').hide();
+	elemento.find('.FotoCargar').hide();
+}
+
+function GuardarFotoError(response, elemento){
+	//Mostrar el botón de error
+	elemento.find('.FotoEliminar').hide();
+	elemento.find('.FotoSpin').hide();
+	elemento.find('.FotoCargar').show();
+}
+
+//Carga las fotos mediante AJAX una vez iniciada la página para que el usuario no tenga que esperar
+function CargaInicialFotos(){
+	$.ajax({
+		contentType: "application/json",
+		method: "GET",
+		url: "ObtenerFotos",
+		success: function(response) { ObtenerFotosOk(response); },
+		error: function(response) { ObtenerFotosError(response); }
+	});
+}
+
+function ObtenerFotosOk(response){
+	//Renderizar fotos
+	if (response && response.Resultado && response.Resultado==='OK' && response.Datos){
+		$.each(response.Datos, function(index, value){
+
+		 	$("#list").append(['<div class="CampoFoto" idFoto="', value._id, '">\
+		 		<div style="margin-top: 15px">\
+		 			<span class="FotoEliminar" style="color: red; display: block;"><i class="fa fa-trash" onclick="EliminarFoto(this);"></i></span>\
+					<span class="FotoSpin" style="color: black; display: none;"><i class="fa fa-spinner fa-spin"></i>Cargando al servidor...</span>\
+					<span class="FotoCargar" style="color: red; cursor: pointer; display: none;" onclick="SubirFoto(this);"><i class="fa fa-upload"></i>Error, clic para volver a intentar...</span>\
+		 		</div>\
+		 		<img class="miniaturaFoto" src="', value.Binario,'" title="', "Foto", '"/> </div>'].join(''));
+
+		});
+	}else{
+		alert("No se pudieron obtener las fotos del servidor, para reintentar vuelva a recargar la página.")
+	}
+}
+
+function ObtenerFotosError(response){
+	//Se dispara si ocurre un error en la conexión con el servidor
 }

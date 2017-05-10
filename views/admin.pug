@@ -38,3 +38,9 @@ block VistaCuerpo
 		.col-sm-12
 			div(style="font-size: 30px; margin-bottom: 30px")
 				|Galeria de Fotos
+
+			form
+				.form-group
+					label(for='files') Seleccione un archivo:
+					input#files(type='file', name='files[]')
+			output#list

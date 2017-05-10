@@ -2,6 +2,12 @@ var express = require('express');
 var app = express();
 
 var bodyParser = require('body-parser');
+
+//Aumentar el límite máximo permitido del request en 50m
+//Nota: Por defecto el límite es muy pequeño para permitir subir fotos
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 
@@ -22,6 +28,8 @@ app.use(express.static('public'));
 
 //Usar el paquete Pug para Templates
 app.set('view engine', 'pug');
+
+
 
 //INICIO Funciones AJAX**************************************************************************************
 
@@ -68,6 +76,65 @@ app.post('/GuardarInfo', function(req, res){
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ Resultado: 'ERROR'}));
   }
+});
+
+app.post('/GuardarFoto', function(req, res){
+  console.log("Acceso a función Ajax GuardarFoto");
+
+  console.log(req.body.content);
+
+  var datos = req.body.content;
+
+  if (datos){
+
+    accesoMongo.guardarFoto(
+      function () {
+        console.log("Error al intentar actualizar la colección Foto");
+
+        //Enviar un flag de Error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERROR'}));
+      },
+      datos,
+      function (result) {
+        console.log(result);
+
+        //Enviar un flag de éxito
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'OK'}));
+      }
+    );
+
+  }else{
+    //Sin datos de entrada
+    console.log("Sin datos");
+
+    //Enviar un flag de Error
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ Resultado: 'ERROR'}));
+  }
+});
+
+app.get('/ObtenerFotos', function(req, res){
+  console.log("Acceso a función Ajax ObtenerFotos");
+
+  accesoMongo.obtenerFotos(
+    function () {
+      console.log("Error al intentar obtener la colección Foto");
+
+      //Enviar un flag de Error
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'ERROR'}));
+    },
+    function (result) {
+      console.log(result);
+
+      //Enviar datos
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'OK', Datos: result}));
+    }
+  );
+
 });
 
 //FIN Funciones AJAX**************************************************************************************

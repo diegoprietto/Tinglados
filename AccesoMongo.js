@@ -2,8 +2,11 @@ var MongoClient = require('mongodb').MongoClient;
 
 var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.net:27017,cluster0-shard-00-01-ngi72.mongodb.net:27017,cluster0-shard-00-02-ngi72.mongodb.net:27017/tinglado?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 var nombreColeccionInfo = "Info";
+var nombreColeccionFoto = "Foto";
 
+//Memorias cachés para recursos
 var cacheColeccionInfo=null;
+var cacheColeccionFoto=null;
 
 var Qux = function () {};
 
@@ -112,6 +115,93 @@ Qux.prototype.guardarInfo = function(error, datos, callback) {
 			});
 		}
 	});
+}
+
+Qux.prototype.guardarFoto = function(error, datos, callback) {
+
+	var estructuraDatos = new Array();
+
+	estructuraDatos.push(
+		{
+			Binario: datos
+		}
+	);
+
+	//Conectarse a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error();
+		}else{
+
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionFoto);
+
+			//Insertar documento
+			collection.insertMany(
+				estructuraDatos,
+				function(err, result) {
+
+					if (err){
+						//Ocurrió un error
+						if (error) error();
+					}else{
+						//Éxito
+						console.log("MongoDB: Colección Actualizada");
+
+						//Resetear caché
+						cacheColeccionFoto=null;
+
+						db.close();
+						callback(result);
+					}
+			});
+
+		}
+	});
+}
+
+Qux.prototype.obtenerFotos = function(error, callback) {
+
+	//Verificar si estan los datos en caché
+	if (cacheColeccionFoto){
+
+		console.log("Acierto en caché: Colección " + cacheColeccionFoto);
+		if (callback) callback(cacheColeccionFoto);
+
+	}else{
+
+		//Se conecta a la BD y obtiene los datos
+		MongoClient.connect(uri, function(err, db) {
+
+			if (err){
+				//Ocurrió un error
+				if (error) error();
+			}else{
+			  	//Referenciar a la colección
+				var collection = db.collection(nombreColeccionFoto);
+
+				//Obtener todos los documentos
+				collection.find({}).toArray(function(err, docs) {
+
+					if (err){
+						//Ocurrió un error
+						if (error) error();
+					}else{
+						console.log(docs)
+						
+						//Actualizar caché
+						cacheColeccionFoto = docs;
+						db.close();
+
+						if (callback) callback(docs);
+					}
+				});
+			}
+		});
+
+	}
 }
 
 exports.Qux = Qux;
