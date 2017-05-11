@@ -1,3 +1,5 @@
+"use strict";
+
 var express = require('express');
 var app = express();
 
@@ -20,6 +22,9 @@ var qux = new Qux();
 var AccesoMongo = require('./AccesoMongo.js').Qux;
 var accesoMongo = new AccesoMongo();
 
+var AccesoMail = require('./AccesoMail.js').Qux;
+var accesoMail = new AccesoMail();
+
 //Definición de puerto
 app.set('port', (process.env.PORT || 5000));
 
@@ -28,7 +33,6 @@ app.use(express.static('public'));
 
 //Usar el paquete Pug para Templates
 app.set('view engine', 'pug');
-
 
 
 
@@ -134,6 +138,45 @@ app.post('/BorrarFoto', function(req, res){
         res.send(JSON.stringify({ Resultado: 'ERROR'}));
       },
       idFoto,
+      function (result) {
+        console.log(result);
+
+        //Enviar un flag de éxito
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'OK'}));
+      }
+    );
+
+  }else{
+    //Sin datos de entrada
+    console.log("Sin datos");
+
+    //Enviar un flag de Error
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ Resultado: 'ERROR'}));
+  }
+});
+
+app.post('/Contacto', function(req, res){
+  console.log("Acceso a función Ajax Contacto");
+
+  console.log(req.body.content);
+
+  var datos = req.body.content;
+
+  //Si hay datos, enviar correo
+  if (datos){
+
+    accesoMail.enviarMail(
+      function () {
+        console.log("Error al intentar enviar mail");
+        console.log(datos);
+
+        //Enviar un flag de Error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERROR'}));
+      },
+      datos,
       function (result) {
         console.log(result);
 

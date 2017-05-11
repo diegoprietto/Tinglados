@@ -34,7 +34,7 @@ html
 					.botonesFlotantes
 						.botonFlotante
 							i.fa.fa-1_5x.fa-picture-o
-						.botonFlotante
+						.botonFlotante(style="display: none;")
 							i.fa.fa-1_5x.fa-map-marker
 					#carrusel.carousel.slide(data-ride='carousel')
 						// Indicators
@@ -84,7 +84,7 @@ html
 
 					#formulario(style='display: inline-block; position: relative; width: 100%;')
 						.tituloFormulario Complete el formulario por presupuestos. Nos contactaremos a la brevedad.
-						form.form-horizontal.cuerpoFormulario(method='POST', action='mailto:pepe@pepe.pepe', accept-charset='UTF-8', rel='nofollow')
+						form.form-horizontal.cuerpoFormulario(method='POST', action='', accept-charset='UTF-8', rel='nofollow', onSubmit='return false;')
 							input(type='hidden', name='_token', value='sWUb6Gq4oi38vjNONW8y1JDU7zh8CjBg5dKz89No')
 							.form-group
 								label.col-sm-12(for='first_name') Nombre
@@ -112,7 +112,7 @@ html
 									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message')
 							.form-group
 								.col-sm-12
-									button.btn.btn-warning.botonEnviar(type="button") ENVIAR
+									button#ContactButton.btn.btn-warning.botonEnviar(type="button", onclick="Contacto();") ENVIAR
 							.form-group
 								.col-sm-12
 									#container-flash-message.flash-message

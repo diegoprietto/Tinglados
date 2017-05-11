@@ -1,3 +1,5 @@
+"use strict";
+
 var MongoClient = require('mongodb').MongoClient;
 var MongoDb = require('mongodb');
 

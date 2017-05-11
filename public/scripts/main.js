@@ -1,3 +1,5 @@
+"use strict";
+
 $(document).ready(function () {
 	actualizarAltoCarrusel();
 	$(".botonLlamar").on( "click", llamarTel );
@@ -29,4 +31,39 @@ function llamarTelCallback(data, textStatus, jqXHR){
 		$(".botonLlamar").html(data.t1 + data.t2);
 		$(".botonLlamar").off( "click" );
 	}
+}
+
+function Contacto(){
+	var datos = ObtenerDatosContacto();
+
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		url: "Contacto",
+		data: JSON.stringify({ content: datos }),
+		success: function(response) { ContactoOk(response); },
+		error: function(response) { ContactoError(response); }
+	});
+}
+
+function ObtenerDatosContacto(){
+	var datos = {
+		nombre: $("#first_name").val(),
+		apellido: $("#last_name").val(),
+		mail: $("#email").val(),
+		telCodigo: $("#area_code").val(),
+		telNro: $("#phone_number").val(),
+		mensaje: $("#message").val()
+	}
+
+	return datos;
+}
+
+function ContactoOk(){
+	$("#ContactButton").attr("disabled", "disabled");
+	alert("Gracias por su contacto, en breve se comunicarán con usted.");
+}
+
+function ContactoError(){
+	alert("Error en el servidor, por favor vuelva a reintentar.");
 }

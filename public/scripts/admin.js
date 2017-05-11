@@ -1,3 +1,5 @@
+"use strict";
+
 var estructuraDocumento = '	<li class="media Documento">\
 								<div class="media-left">\
 									<span style="color: #337ab7;">\
