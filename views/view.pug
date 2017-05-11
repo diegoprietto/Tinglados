@@ -39,28 +39,38 @@ html
 					#carrusel.carousel.slide(data-ride='carousel')
 						// Indicators
 						ol.carousel-indicators
-							li.active(data-target='#carrusel', data-slide-to='0')
-							li(data-target='#carrusel', data-slide-to='1')
-							li(data-target='#carrusel', data-slide-to='2')
-							li(data-target='#carrusel', data-slide-to='3')
-							li(data-target='#carrusel', data-slide-to='4')
+							- var ns = 0;
+							each val in Recursos.Foto
+								if (ns==0)
+									li.active(
+										data-target='#carrusel'
+										data-slide-to= ns
+									)
+								else
+									li(
+										data-target='#carrusel'
+										data-slide-to= ns
+									)
+								- ns++
 						// Wrapper for slides
 						.carousel-inner(role='listbox')
-							.item.active
-								img(style="", src='images/carrusel/1.jpg', alt='...')
-								.carousel-caption
-							.item
-								img(src='images/carrusel/2.jpg', alt='...')
-								.carousel-caption
-							.item
-								img(src='images/carrusel/3.jpg', alt='...')
-								.carousel-caption
-							.item
-								img(src='images/carrusel/4.jpg', alt='...')
-								.carousel-caption
-							.item
-								img(src='images/carrusel/5.jpg', alt='...')
-								.carousel-caption
+							- var n = 0;
+							each val in Recursos.Foto
+								if (n==0)
+									.item
+										img(
+											src= val.Binario
+											alt = '...'
+										)
+										.carousel-caption
+								else
+									.item.active
+										img(
+											src= val.Binario
+											alt = '...'
+										)
+										.carousel-caption
+								- n++
 
 						// Controls
 						a.left.carousel-control(href='#carrusel', role='button', data-slide='prev')
