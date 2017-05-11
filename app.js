@@ -31,6 +31,7 @@ app.set('view engine', 'pug');
 
 
 
+
 //INICIO Funciones AJAX**************************************************************************************
 
 //Ajax: Telefono
@@ -101,6 +102,43 @@ app.post('/GuardarFoto', function(req, res){
 
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'OK', Info: result}));
+      }
+    );
+
+  }else{
+    //Sin datos de entrada
+    console.log("Sin datos");
+
+    //Enviar un flag de Error
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ Resultado: 'ERROR'}));
+  }
+});
+
+app.post('/BorrarFoto', function(req, res){
+  console.log("Acceso a función Ajax BorrarFoto");
+
+  console.log(req.body.content);
+
+  var idFoto = req.body.content;
+
+  if (idFoto){
+
+    accesoMongo.borrarFoto(
+      function () {
+        console.log("Error al intentar actualizar la colección Foto");
+
+        //Enviar un flag de Error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERROR'}));
+      },
+      idFoto,
+      function (result) {
+        console.log(result);
+
+        //Enviar un flag de éxito
+        res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'OK'}));
       }
     );
@@ -144,9 +182,21 @@ app.get('/ObtenerFotos', function(req, res){
 //Renderizar usando Pug
 app.get('/', function(req, res){
 
-  accesoMongo.obtenerInfo(null, true, false, function(data){
-    res.render('view', {info: data});
-  });
+  accesoMongo.obtenerDatosHome(
+    function(error){
+      //Error, pasar datos en blanco
+      var estructuraDatos = {
+        Info: [],
+        Foto: []
+      }
+
+      res.render('view', {Recursos: estructuraDatos});
+    },
+    function(data){
+      //Renderizar con los datos obtenidos
+      res.render('view', {Recursos: data});
+    }
+  );
 });
 
 //Administración del sitio

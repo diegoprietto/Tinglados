@@ -155,7 +155,26 @@ function CargarFoto(evt) {
 }
 
 function EliminarFoto(elemento){
-	alert("En desarrollo");
+	var elementoIdFoto = $(elemento).closest('div.CampoFoto');
+	var idFoto = elementoIdFoto.attr("idFoto");
+
+	//Mostrar animación de cargando
+	elementoIdFoto.find('.FotoEliminar').hide();
+	elementoIdFoto.find('.FotoSpin').show();
+	elementoIdFoto.find('.FotoCargar').hide();
+
+	if (idFoto){
+		$.ajax({
+			contentType: "application/json",
+			method: "POST",
+			url: "BorrarFoto",
+			data: JSON.stringify({ content: idFoto }),
+			success: function(response) { BorrarFotoOk(response, elementoIdFoto); },
+			error: function(response) { BorrarFotoError(response, elementoIdFoto); }
+		});
+	}else{
+		alert("Se produjo un error inesperado, intente recargar la página, si el error persiste contacte al administrador del sitio para su corrección.")
+	}
 }
 
 //Recibe como parámetro el elemento span con clase FotoCargar, se tiene que buscar el div con el atributo idFoto
@@ -190,6 +209,16 @@ function GuardarFotoOk(response, elemento){
 	elemento.find('.FotoEliminar').show();
 	elemento.find('.FotoSpin').hide();
 	elemento.find('.FotoCargar').hide();
+
+	//Obtener el ID de la foto
+	debugger;
+	if (response && response.Resultado && response.Resultado==='OK' && response.Info && response.Info.insertedIds && response.Info.insertedIds.length === 1){
+		var idFoto = response.Info.insertedIds[0];
+		elemento.attr("idFoto", idFoto);
+	}else
+	{
+		alert(alert("Se produjo un error inesperado en el sitio, intente recargar la página para trabajar normalmente, si este mensaje persiste contacte al administrador del sitio para su corrección."))
+	}
 }
 
 function GuardarFotoError(response, elemento){
@@ -197,6 +226,22 @@ function GuardarFotoError(response, elemento){
 	elemento.find('.FotoEliminar').hide();
 	elemento.find('.FotoSpin').hide();
 	elemento.find('.FotoCargar').show();
+}
+
+function BorrarFotoOk(response, elemento){
+	//Eliminar html con efecto especial
+	elemento.fadeOut(3000,function(){
+		elemento.remove();
+	});
+}
+
+function BorrarFotoError(response, elemento){
+	//Mostrar el botón de eliminar
+	elemento.find('.FotoEliminar').show();
+	elemento.find('.FotoSpin').hide();
+	elemento.find('.FotoCargar').hide();
+
+	alert("Se produjo un error inesperado, intente recargar la página, si el error persiste contacte al administrador del sitio para su corrección.")
 }
 
 //Carga las fotos mediante AJAX una vez iniciada la página para que el usuario no tenga que esperar
