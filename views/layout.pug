@@ -34,20 +34,23 @@ html
 					#bs-example-navbar-collapse-1.collapse.navbar-collapse
 						ul.nav.navbar-nav
 							//- Lista de componentes dentro del menú
-							li.dropdown
-								a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
-									| Información 
-									span.caret
-								ul.dropdown-menu
-									li(onclick='if (VisionInfo) VisionInfo();')
-										a(href='#') Actualizar información
-									li.divider(role='separator')
-									li(onclick='if (VisionFotos) VisionFotos();')
-										a(href='#') Actualizar fotos
+							if (rol)
+								li.dropdown
+									a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+										| Información 
+										span.caret
+									ul.dropdown-menu
+										li(onclick='if (VisionInfo) VisionInfo();')
+											a(href='#') Actualizar información
+										li.divider(role='separator')
+										li(onclick='if (VisionFotos) VisionFotos();')
+											a(href='#') Actualizar fotos
 						form.navbar-form.navbar-left
 							//- Controles Izquierda
 						ul.nav.navbar-nav.navbar-right
 							//- Controles Derecha
+							if (rol)
+								<li><a href="/?action=logout">Cerrar Sesión</a></li>
 							li
 								a(href='/')
 									|Ir a Home

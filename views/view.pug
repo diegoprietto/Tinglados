@@ -24,6 +24,12 @@ html
 					img(src="images/logo.png", alt="Logo")
 				.col-sm-6.textoSupIzquierdo
 					|Esteban Ignacio Fernández
+					if (Recursos.Admin)
+						br
+						button.btn.btn-warning(type="button", onclick="location.href='/admin';", style="margin-top: 10px")
+							i.fa.fa-cog(style="margin-right: 5px")
+							|Administrar Sitio
+
 			.row
 				.col-xs-12
 					h1.tituloPrincipal Estructuras Metálicas

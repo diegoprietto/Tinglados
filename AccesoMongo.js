@@ -6,10 +6,12 @@ var MongoDb = require('mongodb');
 var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.net:27017,cluster0-shard-00-01-ngi72.mongodb.net:27017,cluster0-shard-00-02-ngi72.mongodb.net:27017/tinglado?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 var nombreColeccionInfo = "Info";
 var nombreColeccionFoto = "Foto";
+var nombreColeccionUsers = "Users";
 
 //Memorias cachés para recursos
 var cacheColeccionInfo=null;
 var cacheColeccionFoto=null;
+var cacheColeccionUsers=null;
 
 var Qux = function () {};
 
@@ -299,6 +301,48 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 							}
 						});
 
+					}
+				});
+			}
+		});
+
+	}
+}
+
+Qux.prototype.obtenerUsuarios = function(error, callback) {
+
+	//Verificar si estan los datos en caché
+	if (cacheColeccionUsers){
+
+		console.log("Acierto en caché: Colección " + nombreColeccionUsers);
+		if (callback) callback(cacheColeccionUsers);
+
+	}else{
+
+		//Se conecta a la BD y obtiene los datos
+		MongoClient.connect(uri, function(err, db) {
+
+			if (err){
+				//Ocurrió un error
+				if (error) error();
+			}else{
+			  	//Referenciar a la colección
+				var collection = db.collection(nombreColeccionUsers);
+
+				//Obtener todos los documentos
+				collection.find({}).toArray(function(err, docs) {
+
+					if (err){
+						//Ocurrió un error
+						if (error) error();
+					}else{
+						console.log(docs)
+
+						//Actualizar caché
+						cacheColeccionUsers = docs;
+						db.close();
+
+						if (callback) callback(docs);
 					}
 				});
 			}

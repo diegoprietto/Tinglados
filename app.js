@@ -13,9 +13,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
 var Qux = require('./AccesoArchivos.js').Qux;
 var qux = new Qux();
 
@@ -25,6 +22,12 @@ var accesoMongo = new AccesoMongo();
 var AccesoMail = require('./AccesoMail.js').Qux;
 var accesoMail = new AccesoMail();
 
+//Guardar datos en sesiones
+var cookieParser = require('cookie-parser');
+var session = require('express-session');
+app.use(cookieParser());
+app.use(session({secret: "Datos de Sesion"}));
+
 //Definición de puerto
 app.set('port', (process.env.PORT || 5000));
 
@@ -33,7 +36,6 @@ app.use(express.static('public'));
 
 //Usar el paquete Pug para Templates
 app.set('view engine', 'pug');
-
 
 
 //INICIO Funciones AJAX**************************************************************************************
@@ -218,35 +220,117 @@ app.get('/ObtenerFotos', function(req, res){
 
 });
 
+app.post('/login', function(req, res){
+    console.log("Acceso a función Ajax login");
+    console.log(req.body.content);
+
+    var datos = req.body.content;
+
+    if(!datos || !datos.id || !datos.pass){
+        console.log("No se recibieron las credenciales");
+        //Enviar un flag de error de autenticación
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'INCOMPLETE'}));
+    }
+    else{
+
+      accesoMongo.obtenerUsuarios(
+        function () {
+          console.log("Error al intentar obtener la colección Users");
+
+          //Enviar un flag de Error
+          res.setHeader('Content-Type', 'application/json');
+          res.send(JSON.stringify({ Resultado: 'ERROR'}));
+        },
+        function (result) {
+          console.log(result);
+
+          var encontrado = false;
+          for(var i=0; i<result.length; i++){
+            if (result[i].Id.toLowerCase() === datos.id.toLowerCase() && result[i].Pass === datos.pass){
+              req.session.user = result[i];
+              encontrado = true;
+              console.log("LOGIN CORRECTO");
+              break;
+            }
+          }
+
+          if (encontrado){
+              //Enviar un flag de Ok
+              res.setHeader('Content-Type', 'application/json');
+              res.send(JSON.stringify({ Resultado: 'OK'}));
+          }else{
+            //Enviar un flag de error de autenticación
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ Resultado: 'NOTFIND'}));
+          }
+
+
+        }
+      );
+    }
+});
+
 //FIN Funciones AJAX**************************************************************************************
 
-//INICIO Server**************************************************************************************
+
+
+//INICIO Definición URL**************************************************************************************
 
 //Renderizar usando Pug
 app.get('/', function(req, res){
+  var sesionCerrada = false;
+
+  //Verificar parámetros
+  console.log("req.query:");
+  console.log(req.query);
+  if (req.query.action && req.query.action === "logout" && req.session){
+    //Cerrar sesión
+    sesionCerrada = true;
+    req.session.destroy();
+  }
 
   accesoMongo.obtenerDatosHome(
     function(error){
       //Error, pasar datos en blanco
       var estructuraDatos = {
         Info: [],
-        Foto: []
+        Foto: [],
+        Admin: esAdmin(req,sesionCerrada)
       }
 
       res.render('view', {Recursos: estructuraDatos});
     },
     function(data){
       //Renderizar con los datos obtenidos
+      data.Admin = esAdmin(req,sesionCerrada);
       res.render('view', {Recursos: data});
     }
   );
 });
 
+//Determina a partir de los datos de sesión si se tiene permiso de administrador del sitio
+function esAdmin(req, sesionCerrada){
+  if (sesionCerrada){
+    return true;
+  }else if(req && req.session && req.session.user){
+    return true;
+  }else{
+    return false;
+  }
+}
+
 //Administración del sitio
-app.get('/admin', function(req, res){
+app.get('/admin', checkSignIn, function(req, res){
   accesoMongo.obtenerInfo(null, false, true, function(data){
-    res.render('admin', {info: data});
+    //Obtener rol
+    var rol = req.session.user.Rol;
+    res.render('admin', {info: data, rol: rol});
   });
+});
+
+app.get('/login', function(req, res){
+    res.render('login');
 });
 
 //Cualquier url que no existente, redirigir a Home
@@ -255,6 +339,28 @@ app.all('/*', function (req, res) {
 
    res.redirect('/');
 })
+
+ //FIN Definición URL**************************************************************************************
+
+
+
+//INICIO Control Atenticación**************************************************************************************
+
+function checkSignIn(req, res, next){
+    if(req.session.user){
+      console.log("checkSignIn: Usuario con sesión iniciada: " + req.session.user.Id);
+      next();
+    } else {
+      console.log("checkSignIn: Usuario no logueado");
+      res.redirect('/login');
+    }
+}
+
+//FIN Control Atenticación**************************************************************************************
+
+
+
+//INICIO Server**************************************************************************************
 
 var server = app.listen(app.get('port'), function () {
 

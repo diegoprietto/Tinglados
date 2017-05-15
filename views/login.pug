@@ -1,0 +1,11 @@
+extends layout.pug
+
+block VistaLinks
+	script(src="scripts/login.js")
+	link(href="css/login.css", rel="stylesheet")
+
+block VistaCuerpo
+	form(action="", method="POST", onSubmit="return false;")
+		input#id(name="id" type="text" required placeholder="Usuario")
+		input#pass(name="password" type="password" required placeholder="Contraseña")
+		button#init(type="button", onclick="log();") Iniciar Sesión
