@@ -351,5 +351,35 @@ Qux.prototype.obtenerUsuarios = function(error, callback) {
 	}
 }
 
+//Llamada genérica para obtener el primer dato de una colección a indicar
+Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, callback) {
+
+	//Se conecta a la BD y obtiene los datos
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error();
+		}else{
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccion);
+
+			//Obtener un documento
+			collection.findOne({}, function(err, docs) {
+
+				if (err){
+					//Ocurrió un error
+					if (error) error();
+				}else{
+					//Cerrar conexión
+					db.close();
+
+					if (callback) callback(docs);
+				}
+			});
+		}
+	});
+}
+
 
 exports.Qux = Qux;

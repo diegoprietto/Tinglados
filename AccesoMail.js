@@ -29,8 +29,8 @@ Qux.prototype.enviarMail = function (error, datos, callback){
 	var transporter = nodemailer.createTransport({
 	    service: 'Gmail',
 	    auth: {
-	        user: '',
-	        pass: ''
+	        user: datos.usuarioRemitente + '@gmail.com',
+	        pass: datos.passRemitente
 	    }
 	});
 

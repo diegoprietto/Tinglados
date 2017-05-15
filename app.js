@@ -168,6 +168,8 @@ app.post('/Contacto', function(req, res){
 
   //Si hay datos, enviar correo
   if (datos){
+    datos.usuarioRemitente = datosMail.Id;
+    datos.passRemitente = datosMail.Pass;
 
     accesoMail.enviarMail(
       function () {
@@ -369,5 +371,34 @@ var server = app.listen(app.get('port'), function () {
 
    console.log("Servidor iniciado en http://%s:%s", host, port)
 })
+
+//FIN Server**************************************************************************************
+
+
+
+//INICIO Funciones iniciales**************************************************************************************
+
+//Atributos
+var nombreColeccionDatosMail = "Mail";
+var datosMail = null;
+
+
+//Obtener datos para el envío de correos
+function obtenerDatosMail(){
+  accesoMongo.obtenerPrimerDato(
+    function () {
+      console.log("Error al intentar obtener la colección Foto");
+    },
+    nombreColeccionDatosMail,
+    function (result) {
+      console.log(result);
+
+      datosMail = result;
+    }
+  );
+}
+
+//Buscar datos al iniciar la App
+obtenerDatosMail();
 
 //FIN Server**************************************************************************************
