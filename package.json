@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Proyecto Personal",
   "engines": {
-    "node": "5.9.1"
+    "node": ">=6.0.0"
   },
   "main": "app.js",
   "scripts": {
