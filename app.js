@@ -13,9 +13,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 var multer = require('multer'); // v1.0.5
 var upload = multer(); // for parsing multipart/form-data
 
-var Qux = require('./AccesoArchivos.js').Qux;
-var qux = new Qux();
-
 var AccesoMongo = require('./AccesoMongo.js').Qux;
 var accesoMongo = new AccesoMongo();
 
