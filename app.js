@@ -42,7 +42,7 @@ app.get('/getTel', function(req, res){
 	console.log("Acceso a función Ajax getTel");
 
 	res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({ t1: '4321', t2: '-1111' }));
+    res.send(JSON.stringify({ t1: '11-', t2: '6468-6615' }));
 });
 
 app.post('/GuardarInfo', function(req, res){
@@ -279,6 +279,7 @@ app.post('/login', function(req, res){
 //Renderizar usando Pug
 app.get('/', function(req, res){
   var sesionCerrada = false;
+  var cargarDatosBD = true;
 
   //Verificar parámetros
   console.log("req.query:");
@@ -289,23 +290,40 @@ app.get('/', function(req, res){
     req.session.destroy();
   }
 
-  accesoMongo.obtenerDatosHome(
-    function(error){
-      //Error, pasar datos en blanco
-      var estructuraDatos = {
-        Info: [],
-        Foto: [],
-        Admin: esAdmin(req,sesionCerrada)
-      }
+  //Verificar si cargar o no las fotos y datos
+  if (req.query.datosbd && req.query.datosbd === "no")
+    cargarDatosBD = false;
 
-      res.render('view', {Recursos: estructuraDatos});
-    },
-    function(data){
-      //Renderizar con los datos obtenidos
-      data.Admin = esAdmin(req,sesionCerrada);
-      res.render('view', {Recursos: data});
+  if (cargarDatosBD){
+    //Obtener datos de la BD
+    accesoMongo.obtenerDatosHome(
+      function(error){
+        //Error, pasar datos en blanco
+        var estructuraDatos = {
+          Info: [],
+          Foto: [],
+          Admin: esAdmin(req,sesionCerrada)
+        }
+
+        res.render('view', {Recursos: estructuraDatos});
+      },
+      function(data){
+        //Renderizar con los datos obtenidos
+        data.Admin = esAdmin(req,sesionCerrada);
+        res.render('view', {Recursos: data});
+      }
+    );
+  }else{
+    //Opción de carga ligera, no traer datos de la BD
+    var estructuraDatos = {
+      Info: [],
+      Foto: [],
+      Admin: esAdmin(req,sesionCerrada)
     }
-  );
+
+    res.render('view', {Recursos: estructuraDatos});
+  }
+
 });
 
 //Determina a partir de los datos de sesión si se tiene permiso de administrador del sitio

@@ -1,7 +1,7 @@
 doctype html
 html
 	head
-		title="Tinglados"
+		title="Argen-Tech SA"
 
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
 
@@ -23,7 +23,7 @@ html
 				.col-sm-6
 					img(src="images/logo.png", alt="Logo")
 				.col-sm-6.textoSupIzquierdo
-					|Esteban Ignacio Fernández
+					|Cristian Velázquez
 					if (Recursos.Admin)
 						br
 						button.btn.btn-warning(type="button", onclick="location.href='/admin';", style="margin-top: 10px")
@@ -63,17 +63,19 @@ html
 							- var n = 0;
 							each val in Recursos.Foto
 								if (n==0)
-									.item
+									.item(style="text-align: center;")
 										img(
 											src= val.Binario
 											alt = '...'
+											style='max-width: initial; display: inline-block'
 										)
 										.carousel-caption
 								else
-									.item.active
+									.item.active(style="text-align: center;")
 										img(
 											src= val.Binario
 											alt = '...'
+											style='max-width: initial; display: inline-block'
 										)
 										.carousel-caption
 								- n++

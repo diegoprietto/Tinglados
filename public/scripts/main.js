@@ -13,8 +13,11 @@ function actualizarAltoCarrusel(){
 	var altoTitulo = $(".tituloFormulario").height() + parseInt($(".tituloFormulario").css("padding-top").replace("px","")) + parseInt($(".tituloFormulario").css("padding-bottom").replace("px",""));
 	var altoCuerpo = $(".cuerpoFormulario").height() + parseInt($(".cuerpoFormulario").css("padding-top").replace("px","")) + parseInt($(".cuerpoFormulario").css("padding-bottom").replace("px",""));
 
-	$("#carrusel").css("height",(altoTitulo + altoCuerpo) + "px");
-	$(".carousel-inner img").css("height",(altoTitulo + altoCuerpo) + "px");
+	var altoTotal = altoTitulo + altoCuerpo;
+	var anchoTotal = (26/17)*altoTotal;
+	$("#carrusel").css("height",altoTotal + "px");
+	$(".carousel-inner img").css("height", altoTotal + "px");
+	$(".carousel-inner img").css("width", anchoTotal + "px");
 }
 
 function llamarTel(){
