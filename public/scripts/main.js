@@ -3,6 +3,8 @@
 $(document).ready(function () {
 	actualizarAltoCarrusel();
 	$(".botonLlamar").on( "click", llamarTel );
+	//Solicitar fotos del server para el carrousel
+	CargaInicialFotos();
 });
 
 $(window).resize(function () {
@@ -69,4 +71,55 @@ function ContactoOk(){
 
 function ContactoError(){
 	alert("Error en el servidor, por favor vuelva a reintentar.");
+}
+
+//Solicitar fotos mas adecuadas para el tamaño de pantalla actual
+function CargaInicialFotos(){
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		data: JSON.stringify({ content: $("#carrusel").width() }),
+		url: "ObtenerFotos",
+		success: function(response) { ObtenerFotosOk(response); },
+		error: function(response) { ObtenerFotosError(response); }
+	});
+}
+
+function ObtenerFotosOk(response){
+
+	//Buscar propiedad que ontenga la cadena Binario
+	var nombrePropiedad = null;
+	if (response && response.Datos && response.Datos[0]){
+		for (var propiedad in response.Datos[0]){
+	    	if (propiedad.includes("Binario")){
+				nombrePropiedad = propiedad;
+	    	}
+		}
+	}
+
+	if (nombrePropiedad){
+
+		var coleccionContenedores = $(".carousel-inner img");
+		var coleccionSpinners = $(".carousel-inner .fa-spinner");
+
+
+		//Recorrer fotos
+		$.each(response.Datos, function(index, value){
+
+			try
+			{
+				//Colocar imagen
+				$(coleccionContenedores[index]).attr("src", value[nombrePropiedad]);
+				//Mostrar la imagen
+				$(coleccionContenedores[index]).css("display", "inline-block");
+				//Ocultar spinner
+				$(coleccionSpinners[index]).css("display", "none");
+			}catch(ex){}
+
+		});
+	}
+}
+
+function ObtenerFotosError(response){
+	//Se dispara si ocurre un error en la conexión con el servidor
 }

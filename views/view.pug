@@ -17,6 +17,8 @@ html
 
 		link(rel='shortcut icon', type='image/x-icon', href='/images/favicon.ico')
 
+		meta(name='viewport', content='width=device-width, initial-scale=1')
+
 	body
 		.cabecera
 			.row
@@ -46,7 +48,7 @@ html
 						// Indicators
 						ol.carousel-indicators
 							- var ns = 0;
-							each val in Recursos.Foto
+							while ns < Recursos.CantFotos
 								if (ns==0)
 									li.active(
 										data-target='#carrusel'
@@ -61,19 +63,19 @@ html
 						// Wrapper for slides
 						.carousel-inner(role='listbox')
 							- var n = 0;
-							each val in Recursos.Foto
+							while n < Recursos.CantFotos
 								if (n==0)
 									.item(style="text-align: center;")
+										span.fa.fa-spinner.fa-spin(style="display: inline-block; margin-top: 100px; font-size: 50px; margin-bottom: 100%")
 										img(
-											src= val.BinarioXL
 											alt = '...'
-											style='max-width: initial; display: inline-block'
+											style='max-width: initial; display: none'
 										)
 										.carousel-caption
 								else
 									.item.active(style="text-align: center;")
+										span.fa.fa-spinner.fa-spin(style="display: inline-block; margin-top: 100px; font-size: 50px; margin-bottom: 100%")
 										img(
-											src= val.BinarioXL
 											alt = '...'
 											style='max-width: initial; display: inline-block'
 										)

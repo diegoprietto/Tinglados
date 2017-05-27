@@ -10,8 +10,12 @@ var nombreColeccionUsers = "Users";
 
 //Memorias cachés para recursos
 var cacheColeccionInfo=null;
-var cacheColeccionFoto=null;
+var cacheColeccionFotoS=null;
+var cacheColeccionFotoM=null;
+var cacheColeccionFotoL=null;
+var cacheColeccionFotoXL=null;
 var cacheColeccionUsers=null;
+var cacheColeccionCantFotos=null;
 
 var Qux = function () {};
 
@@ -155,7 +159,11 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 						console.log("MongoDB: Colección Actualizada");
 
 						//Resetear caché
-						cacheColeccionFoto = null;
+						cacheColeccionFotoS = null;
+						cacheColeccionFotoM = null;
+						cacheColeccionFotoL = null;
+						cacheColeccionFotoXL = null;
+						cacheColeccionCantFotos = null;
 						//Éxito
 						if (callback) callback(result);
 					}
@@ -195,7 +203,11 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 						console.log("MongoDB: Colección Actualizada");
 
 						//Resetear caché
-						cacheColeccionFoto=null;
+						cacheColeccionFotoS = null;
+						cacheColeccionFotoM = null;
+						cacheColeccionFotoL = null;
+						cacheColeccionFotoXL = null;
+						cacheColeccionCantFotos = null;
 
 						db.close();
 						callback(result);
@@ -206,15 +218,40 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 	});
 }
 
-Qux.prototype.obtenerFotos = function(error, callback) {
-	////Por el momento inhabilitar caché, necesita ser actualizado
-	cacheColeccionFoto=false;
+Qux.prototype.obtenerFotos = function(error, anchoContenedor, callback) {
+
+	console.log(anchoContenedor);
+
+	var filtroTamanio;
+	var cacheColeccionFotoAdecuado;
+	if (anchoContenedor){
+		//Buscar el tamaño adecuado de foto para la pantalla del dispositivo
+		anchoContenedor= parseInt(anchoContenedor);
+
+		if (anchoContenedor >= 900){
+			filtroTamanio = {_id: 1, BinarioXL: 1};
+			cacheColeccionFotoAdecuado = cacheColeccionFotoXL;
+		}else if (anchoContenedor >= 600){
+			filtroTamanio = {_id: 1, BinarioL: 1};
+			cacheColeccionFotoAdecuado = cacheColeccionFotoL;
+		}else if (anchoContenedor >= 300){
+			filtroTamanio = {_id: 1, BinarioM: 1};
+			cacheColeccionFotoAdecuado = cacheColeccionFotoM;
+		}else{
+			filtroTamanio = {_id: 1, BinarioS: 1};
+			cacheColeccionFotoAdecuado = cacheColeccionFotoS;
+		}
+
+	}else{
+		//Por defecto obtener las fotos de tamaño menor
+		filtroTamanio = {_id: 1, BinarioS: 1};
+	}
 
 	//Verificar si estan los datos en caché
-	if (cacheColeccionFoto){
+	if (cacheColeccionFotoAdecuado){
 
-		console.log("Acierto en caché: Colección " + cacheColeccionFoto);
-		if (callback) callback(cacheColeccionFoto);
+		console.log("Acierto en caché: Colección de fotos");
+		if (callback) callback(cacheColeccionFotoAdecuado);
 
 	}else{
 
@@ -229,7 +266,7 @@ Qux.prototype.obtenerFotos = function(error, callback) {
 				var collection = db.collection(nombreColeccionFoto);
 
 				//Obtener todos los documentos
-				collection.find({},{_id: 1, BinarioS: 1}).toArray(function(err, docs) {
+				collection.find({},filtroTamanio).toArray(function(err, docs) {
 
 					if (err){
 						//Ocurrió un error
@@ -238,7 +275,16 @@ Qux.prototype.obtenerFotos = function(error, callback) {
 						console.log(docs)
 
 						//Actualizar caché
-						cacheColeccionFoto = docs;
+						if (anchoContenedor >= 900){
+							cacheColeccionFotoXL = docs;
+						}else if (anchoContenedor >= 600){
+							cacheColeccionFotoL = docs;
+						}else if (anchoContenedor >= 300){
+							cacheColeccionFotoM = docs;
+						}else{
+							cacheColeccionFotoS = docs;
+						}
+
 						db.close();
 
 						if (callback) callback(docs);
@@ -252,15 +298,13 @@ Qux.prototype.obtenerFotos = function(error, callback) {
 
 //Obtener información y fotos para renderizar el home
 Qux.prototype.obtenerDatosHome = function (error, callback) {
-	////Por el momento inhabilitar caché, necesita ser actualizado
-	cacheColeccionFoto=false;
-	
+
 	var estructuraDatos = new Object();
 
 	//Verificar si estan los datos en caché
-	if (cacheColeccionInfo && cacheColeccionFoto){
+	if (cacheColeccionInfo && cacheColeccionCantFotos){
 		estructuraDatos.Info = cacheColeccionInfo;
-		estructuraDatos.Foto = cacheColeccionFoto;
+		estructuraDatos.CantFotos = cacheColeccionCantFotos;
 
 		if (callback) callback(estructuraDatos);
 
@@ -289,15 +333,18 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 						estructuraDatos.Info = docs;
 
 						//Obtener todos los documentos de Foto
-						collectionFoto.find({},{_id: 1, BinarioXL: 1}).toArray(function(errF, docsF) {
+						collectionFoto.count(function(errF, result) {
 
 							if (errF){
 								//Ocurrió un error
 								if (error) error(errF);
 							}else{
+								console.log("OBTENINENDO CANTIDAD DE REGISTROS")
+								console.log(result);
+
 								//Actualizar caché y estructura
-								cacheColeccionFoto = docsF;
-								estructuraDatos.Foto = docsF;
+								cacheColeccionCantFotos = result;
+								estructuraDatos.CantFotos = result;
 
 								//Cerrar conexión
 								db.close();

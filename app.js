@@ -223,8 +223,21 @@ app.post('/Contacto', function(req, res){
   }
 });
 
-app.get('/ObtenerFotos', function(req, res){
+app.post('/ObtenerFotos', function(req, res){
   console.log("Acceso a función Ajax ObtenerFotos");
+
+  //Obtener parámetros de entrada
+  var datos = req.body.content;
+  var anchoCarrousel = null;
+
+  console.log(req.body.content);
+
+  //Verificar si se solicita un ancho específico de imagen para carrousel
+  if(datos){
+    anchoCarrousel = datos;
+    
+    console.log("SIII!, ancho solicitado");
+  }
 
   accesoMongo.obtenerFotos(
     function () {
@@ -234,6 +247,7 @@ app.get('/ObtenerFotos', function(req, res){
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify({ Resultado: 'ERROR'}));
     },
+    anchoCarrousel,
     function (result) {
       console.log(result);
 
@@ -328,7 +342,7 @@ app.get('/', function(req, res){
 
         var estructuraDatos = {
           Info: [],
-          Foto: [],
+          CantFotos: 0,
           Admin: esAdmin(req,sesionCerrada)
         }
 
@@ -345,7 +359,7 @@ app.get('/', function(req, res){
     //Opción de carga ligera, no traer datos de la BD
     var estructuraDatos = {
       Info: [],
-      Foto: [],
+      CantFotos: 0,
       Admin: esAdmin(req,sesionCerrada)
     }
 

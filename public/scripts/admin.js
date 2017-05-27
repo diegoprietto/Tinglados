@@ -249,7 +249,7 @@ function BorrarFotoError(response, elemento){
 function CargaInicialFotos(){
 	$.ajax({
 		contentType: "application/json",
-		method: "GET",
+		method: "POST",
 		url: "ObtenerFotos",
 		success: function(response) { ObtenerFotosOk(response); },
 		error: function(response) { ObtenerFotosError(response); }
