@@ -213,7 +213,6 @@ function GuardarFotoOk(response, elemento){
 	elemento.find('.FotoCargar').hide();
 
 	//Obtener el ID de la foto
-	debugger;
 	if (response && response.Resultado && response.Resultado==='OK' && response.Info && response.Info.insertedIds && response.Info.insertedIds.length === 1){
 		var idFoto = response.Info.insertedIds[0];
 		elemento.attr("idFoto", idFoto);
@@ -268,7 +267,7 @@ function ObtenerFotosOk(response){
 					<span class="FotoSpin" style="color: black; display: none;"><i class="fa fa-spinner fa-spin"></i>Cargando al servidor...</span>\
 					<span class="FotoCargar" style="color: red; cursor: pointer; display: none;" onclick="SubirFoto(this);"><i class="fa fa-upload"></i>Error, clic para volver a intentar...</span>\
 		 		</div>\
-		 		<img class="miniaturaFoto" src="', value.Binario,'" title="', "Foto", '"/> </div>'].join(''));
+		 		<img class="miniaturaFoto" src="', value.BinarioS,'" title="', "Foto", '"/> </div>'].join(''));
 
 		});
 	}else{

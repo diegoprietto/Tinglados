@@ -126,16 +126,13 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 
 	var estructuraDatos = new Array();
 
-	estructuraDatos.push(
-		{
-			Binario: datos
-		}
-	);
+	estructuraDatos.push(datos);
 
 	//Conectarse a la BD
 	MongoClient.connect(uri, function(err, db) {
 
 		if (err){
+			console.log("Error al intentar conectar a la BD para guardar fotos");
 			//Ocurrió un error
 			if (error) error();
 		}else{
@@ -149,6 +146,8 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 				function(err, result) {
 
 					if (err){
+						console.log("Error en la función insertMany de MongoDB");
+						console.log(err);
 						//Ocurrió un error
 						if (error) error();
 					}else{
@@ -156,14 +155,15 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 						console.log("MongoDB: Colección Actualizada");
 
 						//Resetear caché
-						cacheColeccionFoto=null;
-
-						db.close();
-						callback(result);
+						cacheColeccionFoto = null;
+						//Éxito
+						if (callback) callback(result);
 					}
 			});
 
 		}
+
+		db.close();
 	});
 }
 
@@ -207,6 +207,8 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 }
 
 Qux.prototype.obtenerFotos = function(error, callback) {
+	////Por el momento inhabilitar caché, necesita ser actualizado
+	cacheColeccionFoto=false;
 
 	//Verificar si estan los datos en caché
 	if (cacheColeccionFoto){
@@ -227,7 +229,7 @@ Qux.prototype.obtenerFotos = function(error, callback) {
 				var collection = db.collection(nombreColeccionFoto);
 
 				//Obtener todos los documentos
-				collection.find({}).toArray(function(err, docs) {
+				collection.find({},{_id: 1, BinarioS: 1}).toArray(function(err, docs) {
 
 					if (err){
 						//Ocurrió un error
@@ -250,6 +252,9 @@ Qux.prototype.obtenerFotos = function(error, callback) {
 
 //Obtener información y fotos para renderizar el home
 Qux.prototype.obtenerDatosHome = function (error, callback) {
+	////Por el momento inhabilitar caché, necesita ser actualizado
+	cacheColeccionFoto=false;
+	
 	var estructuraDatos = new Object();
 
 	//Verificar si estan los datos en caché
@@ -284,7 +289,7 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 						estructuraDatos.Info = docs;
 
 						//Obtener todos los documentos de Foto
-						collectionFoto.find({}).toArray(function(errF, docsF) {
+						collectionFoto.find({},{_id: 1, BinarioXL: 1}).toArray(function(errF, docsF) {
 
 							if (errF){
 								//Ocurrió un error

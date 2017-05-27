@@ -19,6 +19,9 @@ var accesoMongo = new AccesoMongo();
 var AccesoMail = require('./AccesoMail.js').Qux;
 var accesoMail = new AccesoMail();
 
+var AccesoJimp = require('./AccesoJimp.js').Qux;
+var accesoJimp = new AccesoJimp();
+
 //Guardar datos en sesiones
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -85,15 +88,14 @@ app.post('/GuardarInfo', function(req, res){
 app.post('/GuardarFoto', function(req, res){
   console.log("Acceso a función Ajax GuardarFoto");
 
-  console.log(req.body.content);
-
   var datos = req.body.content;
+
 
   if (datos){
 
-    accesoMongo.guardarFoto(
+    accesoJimp.obtenerCategorias(
       function () {
-        console.log("Error al intentar actualizar la colección Foto");
+        console.log("Error al intentar calcular las dimensiones de la imagen");
 
         //Enviar un flag de Error
         res.setHeader('Content-Type', 'application/json');
@@ -101,11 +103,35 @@ app.post('/GuardarFoto', function(req, res){
       },
       datos,
       function (result) {
-        console.log(result);
+        //'result' es un array con las dimensiones de las fotos calculadas en orden de mayor a menor dimensión
 
-        //Enviar un flag de éxito
-        res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify({ Resultado: 'OK', Info: result}));
+        console.log("Creando registro para almacenar las fotos en la BD");
+
+        var registro = {
+          BinarioXL: result[0],
+          BinarioL: result[1],
+          BinarioM: result[2],
+          BinarioS: result[3]
+        };
+
+        console.log("Se procede al guardado de fotos");
+
+        //Almacenar la colección de fotos
+        accesoMongo.guardarFoto(
+          function () {
+            console.log("Error al intentar actualizar la colección Foto");
+
+            //Enviar un flag de Error
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ Resultado: 'ERROR'}));
+          },
+          registro,
+          function (result) {
+            //Enviar un flag de éxito
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ Resultado: 'OK', Info: result}));
+          }
+        );
       }
     );
 
@@ -115,7 +141,7 @@ app.post('/GuardarFoto', function(req, res){
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify({ Resultado: 'ERROR'}));
+    res.send(JSON.stringify({ Resultado: 'ERROR', Info: "Error de servidor, no se recibieron datos"}));
   }
 });
 
@@ -282,8 +308,6 @@ app.get('/', function(req, res){
   var cargarDatosBD = true;
 
   //Verificar parámetros
-  console.log("req.query:");
-  console.log(req.query);
   if (req.query.action && req.query.action === "logout" && req.session){
     //Cerrar sesión
     sesionCerrada = true;
@@ -299,6 +323,9 @@ app.get('/', function(req, res){
     accesoMongo.obtenerDatosHome(
       function(error){
         //Error, pasar datos en blanco
+        console.log("Error al obtener datos");
+        console.log(error);
+
         var estructuraDatos = {
           Info: [],
           Foto: [],
@@ -309,7 +336,8 @@ app.get('/', function(req, res){
       },
       function(data){
         //Renderizar con los datos obtenidos
-        data.Admin = esAdmin(req,sesionCerrada);
+        data.Admin = esAdmin(req, sesionCerrada);
+
         res.render('view', {Recursos: data});
       }
     );
