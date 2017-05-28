@@ -114,3 +114,16 @@
 	margin-top: 5px;
 	margin-bottom: 15px;
 }
+
+#linkFace{
+	color: #365899;
+ 	margin-left: 1px;
+ 	cursor: pointer;
+}
+#linkFace:hover{
+	color: #363C9A;
+	text-decoration: none;
+}
+#linkFace:link, #linkFace:visited, #linkFace:active {
+    text-decoration: none;
+}
