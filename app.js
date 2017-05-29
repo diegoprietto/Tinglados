@@ -22,6 +22,8 @@ var accesoMail = new AccesoMail();
 var AccesoJimp = require('./AccesoJimp.js').Qux;
 var accesoJimp = new AccesoJimp();
 
+var async = require("async");
+
 //Guardar datos en sesiones
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
@@ -194,24 +196,69 @@ app.post('/Contacto', function(req, res){
     datos.usuarioRemitente = datosMail.Id;
     datos.passRemitente = datosMail.Pass;
 
-    accesoMail.enviarMail(
-      function () {
-        console.log("Error al intentar enviar mail");
-        console.log(datos);
+    //Enviar mail y almacenar en BD en paralelo
+    async.parallel([
+        function(callback) {
+
+            //Proceso de envío de mail
+            accesoMail.enviarMail(
+              function () {
+                console.log("Error al intentar enviar mail");
+                console.log(datos);
+
+                //Indicar error
+                callback("Error al intentar enviar mail", null);
+              },
+              datos,
+              function (result) {
+                console.log(result);
+
+                //Indicar Éxito
+                callback(null, result);
+              }
+            );
+        },
+        function(callback) {
+
+          //Proceso de actualización en BD
+          accesoMongo.guardarSolicitud(
+              function () {
+                console.log("Error al intentar almacenar en BD");
+                console.log(datos);
+
+                //Indicar error
+                callback("Error al intentar almacenar en BD", null);
+              },
+              datos,
+              function (result) {
+                console.log(result);
+
+                //Indicar Éxito
+                callback(null, result);
+              }
+            );
+        }
+    ],
+    // Parallel callback
+    function(err, results) {
+      //Verificar resultado
+      if (err) {
+        console.log("Error en las funciones en paralelo para enviar mail de solicitud de presupuesto");
+        console.log(err)
 
         //Enviar un flag de Error
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'ERROR'}));
-      },
-      datos,
-      function (result) {
-        console.log(result);
+      }
+      else{
+        //Éxito
+        console.log("Funciones en paralelo para enviar mail de solicitud de presupuesto realizado con éxito");
 
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'OK'}));
       }
-    );
+    });
 
   }else{
     //Sin datos de entrada

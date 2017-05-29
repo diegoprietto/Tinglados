@@ -115,15 +115,15 @@ html
 							.form-group
 								label.col-sm-12(for='first_name') Nombre
 								.col-sm-12
-									input#first_name.form-control(placeholder='Nombre', name='first_name', type='text')
+									input#first_name.form-control(placeholder='Nombre', name='first_name', type='text', maxlength='100')
 							.form-group
 								label.col-sm-12(for='last_name') Apellido
 								.col-sm-12
-									input#last_name.form-control(placeholder='Apellido', name='last_name', type='text')
+									input#last_name.form-control(placeholder='Apellido', name='last_name', type='text', maxlength='100')
 							.form-group
 								label.col-sm-12(for='email') Email
 								.col-sm-12
-									input#email.form-control(placeholder='Email', name='email', type='text')
+									input#email.form-control(placeholder='Email', name='email', type='text', maxlength='100')
 							.form-group
 								label.col-sm-12(for='phone_number') Teléfono
 								.col-sm-4
@@ -131,11 +131,11 @@ html
 								.col-sm-1.infoCodigoArea
 									i.fa.fa-question-circle(aria-hidden="true")
 								.col-sm-7
-									input#phone_number.form-control(maxlength='12', placeholder='Teléfono', name='phone_number', type='text')
+									input#phone_number.form-control(maxlength='50', placeholder='Teléfono', name='phone_number', type='text')
 							.form-group
 								label.col-sm-12(for='message') Mensaje
 								.col-sm-12
-									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message')
+									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message', maxlength='50000')
 							.form-group
 								.col-sm-12
 									button#ContactButton.btn.btn-warning.botonEnviar(type="button", onclick="Contacto();") ENVIAR

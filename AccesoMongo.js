@@ -7,6 +7,7 @@ var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.n
 var nombreColeccionInfo = "Info";
 var nombreColeccionFoto = "Foto";
 var nombreColeccionUsers = "Users";
+var nombreColeccionSolicitudes = "Solicitudes";
 
 //Memorias cachés para recursos
 var cacheColeccionInfo=null;
@@ -433,5 +434,57 @@ Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, callback) {
 	});
 }
 
+//Almacenamiento de solicitud de presupuesto por parte del usuario
+Qux.prototype.guardarSolicitud = function(error, datos, callback) {
+
+	//Conectarse a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error();
+		}else{
+
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionSolicitudes);
+			var nuevoRegistro = convertDatosToSolicitudes(datos);
+
+
+			//Insertar documentos
+			collection.insertMany(
+				[nuevoRegistro],
+				function(err, result) {
+
+					if (err){
+						//Ocurrió un error
+						if (error) error();
+					}else{
+						//Éxito
+						console.log("MongoDB: Colección Actualizada");
+
+						db.close();
+						callback(result);
+					}
+			});
+
+		}
+	});
+}
+
+//Convierte datos entrantes a la estructura adecuada para la colección Solicitudes
+function convertDatosToSolicitudes(datosEntrada){
+	var estructura = {
+		Fecha: new Date(),
+		Nombre: datosEntrada.nombre,
+		Apellido: datosEntrada.apellido,
+		Mail: datosEntrada.mail,
+		TelCodigo: datosEntrada.telCodigo,
+		TelNro: datosEntrada.telNro,
+		Mensaje: datosEntrada.mensaje,
+		VistoUsuarios: []
+	}
+
+	return estructura;
+}
 
 exports.Qux = Qux;

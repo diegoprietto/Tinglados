@@ -1,15 +1,6 @@
 "use strict";
 
 $(document).ready(function () {
-	//Scrips de Facebook
-	$("#scriptFace").append("(function(d, s, id) {\
-	  var js, fjs = d.getElementsByTagName(s)[0];\
-	  if (d.getElementById(id)) return;\
-	  js = d.createElement(s); js.id = id;\
-	  js.src = '//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.9&appId=805247039540795';\
-	  fjs.parentNode.insertBefore(js, fjs);\
-	}(document, 'script', 'facebook-jssdk'));");
-
 	actualizarAltoCarrusel();
 	$(".botonLlamar").on( "click", llamarTel );
 	//Solicitar fotos del server para el carrousel
@@ -50,14 +41,16 @@ function llamarTelCallback(data, textStatus, jqXHR){
 function Contacto(){
 	var datos = ObtenerDatosContacto();
 
-	$.ajax({
-		contentType: "application/json",
-		method: "POST",
-		url: "Contacto",
-		data: JSON.stringify({ content: datos }),
-		success: function(response) { ContactoOk(response); },
-		error: function(response) { ContactoError(response); }
-	});
+	if (ValidarDatos(datos)){
+		$.ajax({
+			contentType: "application/json",
+			method: "POST",
+			url: "Contacto",
+			data: JSON.stringify({ content: datos }),
+			success: function(response) { ContactoOk(response); },
+			error: function(response) { ContactoError(response); }
+		});
+	}
 }
 
 function ObtenerDatosContacto(){
@@ -71,6 +64,66 @@ function ObtenerDatosContacto(){
 	}
 
 	return datos;
+}
+
+function ValidarDatos(datos){
+	var msjError = new Array();
+
+	datos.nombre = datos.nombre.trim();
+	datos.apellido = datos.apellido.trim();
+	datos.mail = datos.mail.trim();
+	datos.telCodigo = datos.telCodigo.trim();
+	datos.telNro = datos.telNro.trim();
+	datos.mensaje = datos.mensaje.trim();
+
+	//Verificar campos
+	if (datos.nombre.length === 0){
+		msjError.push("Ingrese su nombre");
+		$("#first_name").css("background-color", "#efdce1");
+	}
+	if (datos.apellido.length === 0){
+		msjError.push("Ingrese su apellido");
+		$("#last_name").css("background-color", "#efdce1");
+	}
+	if (datos.mail.length === 0){
+		msjError.push("Ingrese su mail, esto permitirá que lo podamos contactar por este medio");
+		$("#email").css("background-color", "#efdce1");
+	}else if (!validarEmail){
+		msjError.push("Ingrese un mail válido");
+		$("#email").css("background-color", "#efdce1");
+	}
+	if (datos.telCodigo.length === 0){
+		msjError.push("Ingrese el código de área");
+		$("#area_code").css("background-color", "#efdce1");
+	}else if(!permitirSoloCaracteres(datos.telCodigo, "0123456789 -")){
+		msjError.push("Ingrese un código de área válido");
+		$("#area_code").css("background-color", "#efdce1");
+	}
+	if (datos.telNro.length === 0){
+		msjError.push("Ingrese su número de telefono, esto permitirá que lo podamos contactar por este medio");
+		$("#phone_number").css("background-color", "#efdce1");
+	} if(!permitirSoloCaracteres(datos.telNro, "0123456789 -")){
+		msjError.push("Ingrese un teléfono válido");
+		$("#phone_number").css("background-color", "#efdce1");
+	}
+	if (datos.mensaje.length === 0){
+		msjError.push("Ingrese algún mensaje");
+		$("#message").css("background-color", "#efdce1");
+	}
+
+
+	/////TERMINAR DESARROLLO
+	if (msjError.length > 0){
+		////Mostrar errores al usuario
+
+		return false;
+	}else{
+		//Todo Ok
+
+		////Quitar colores rojos a los campos que pudieran haberse marcado como inválido
+
+		return true;
+	}
 }
 
 function ContactoOk(){
@@ -131,4 +184,25 @@ function ObtenerFotosOk(response){
 
 function ObtenerFotosError(response){
 	//Se dispara si ocurre un error en la conexión con el servidor
+}
+
+function validarEmail(valor) {
+  if (/^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i.test(valor)){
+   return true;
+  } else {
+   return false;
+  }
+}
+
+function permitirSoloCaracteres(texto, caracteres){
+	var result = true;
+
+	for(var i = 0; i < texto.length; i++){
+		if (!caracteres.includes(texto[i])){
+			result=false;
+			break;
+		}
+	}
+
+	return result;
 }
