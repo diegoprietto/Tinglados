@@ -15,6 +15,11 @@ var estructuraDocumento = '	<li class="media Documento">\
 								</div>\
 							</li>';
 
+//Indica cual vistas ya fueron cargadas y no deben volver a cargarse de nuevo
+var VistasCargadas = {
+	fotos: false,
+	solicitudes: false
+}
 
 $(document).ready(function () {
 	//Contenedor de fotos desactivado
@@ -24,9 +29,6 @@ $(document).ready(function () {
 
 	//Asignar evento al control de carga de imagenes para procesar los archivos seleccionados
 	document.getElementById('files').addEventListener('change', CargarFoto, false);
-
-	//Cargar fotos dinámicamente
-	CargaInicialFotos();
 });
 
 function AgregarInfo(){
@@ -116,11 +118,31 @@ function ObtenerDatosInfo(){
 function VisionInfo(){
 	$("#ContenedorFotos").hide();
 	$("#ContenedorInfo").show();
+	$("#ContenedorSolicitudes").hide();
 }
 
 function VisionFotos(){
 	$("#ContenedorFotos").show();
 	$("#ContenedorInfo").hide();
+	$("#ContenedorSolicitudes").hide();
+
+	//Cargar fotos dinámicamente
+	if (!VistasCargadas.fotos){
+		VistasCargadas.fotos = true;
+		CargaInicialFotos();
+	}
+}
+
+function VisionSolicitudes(){
+	$("#ContenedorFotos").hide();
+	$("#ContenedorInfo").hide();
+	$("#ContenedorSolicitudes").show();
+
+	//Carga de solicitudes
+	if (!VistasCargadas.solicitudes){
+		VistasCargadas.solicitudes = true;
+		ObtenerSolicitudes();
+	}
 }
 
 function CargarFoto(evt) {
@@ -258,7 +280,9 @@ function CargaInicialFotos(){
 
 function ObtenerFotosOk(response){
 	//Renderizar fotos
+	$("#list").empty();
 	if (response && response.Resultado && response.Resultado==='OK' && response.Datos){
+
 		$.each(response.Datos, function(index, value){
 
 		 	$("#list").append(['<div class="CampoFoto" idFoto="', value._id, '">\
@@ -271,10 +295,131 @@ function ObtenerFotosOk(response){
 
 		});
 	}else{
-		alert("No se pudieron obtener las fotos del servidor, para reintentar vuelva a recargar la página.")
+		//Insertar en el HTML el alerta de error
+		$("#list").append('\
+			<div class="col-sm-12">\
+					<div class="alert alert-danger" role="danger" ><i class="fa fa-exclamation-triangle"></i> No se pudieron obtener las fotos del servidor, para reintentar vuelva a recargar la página.</div>\
+			</div>'
+			);
 	}
 }
 
 function ObtenerFotosError(response){
-	//Se dispara si ocurre un error en la conexión con el servidor
+	//Insertar en el HTML el alerta de error
+	$("#list").empty();
+	$("#list").append('\
+		<div class="col-sm-12">\
+				<div class="alert alert-danger" role="danger" ><i class="fa fa-exclamation-triangle"></i> No se pudieron obtener las fotos del servidor, para reintentar vuelva a recargar la página.</div>\
+		</div>');
+}
+
+//Carga las solicitudes realizadas por los usuarios
+function ObtenerSolicitudes(){
+	$.ajax({
+		contentType: "application/json",
+		method: "GET",
+		url: "ObtenerSolicitudes",
+		success: function(response) { ObtenerSolicitudesOk(response); },
+		error: function(response) { ObtenerSolicitudesError(response); }
+	});
+}
+
+function ObtenerSolicitudesOk(result){
+	var htmlPanel;
+
+	$("#ContenedorSolicitudes").empty();
+
+	if (result && result.Datos && result.Datos.length){
+
+		var lista = result.Datos;
+
+		//Escribir html
+		for (var i=0; i < lista.length; i++){
+
+			htmlPanel = '\
+				<div class="col-sm-12" id="' + lista[i]._id + '">\
+				   <div class="panel panel-info" >\
+				      <div class="panel-heading">' + VerificarSiEsNuevoHtml(lista[i].Nuevo) + ' ' + ConvertirFechaToString(lista[i].Fecha) + ' </div>\
+				      <div class="panel-body">\
+				         <ul class="list-group">\
+				            <li class="list-group-item">\
+				               <div class="tituloSolicitud">Nombre:</div>\
+				               ' + lista[i].Nombre + '\
+				            </li>\
+				            <li class="list-group-item">\
+				               <div class="tituloSolicitud">Apellido:</div>\
+				               ' + lista[i].Apellido + '\
+				            </li>\
+				            <li class="list-group-item">\
+				               <div class="tituloSolicitud">Mail:</div>\
+				               ' + lista[i].Mail + '\
+				            </li>\
+				            <li class="list-group-item">\
+				               <div class="tituloSolicitud">Teléfono:</div>\
+				               ' + lista[i].TelCodigo + ' - ' + lista[i].TelNro + '\
+				            </li>\
+				            <li class="list-group-item">\
+				               <div class="tituloSolicitud">Mensaje:</div>\
+				               ' + lista[i].Mensaje + '\
+				            </li>\
+				         </ul>\
+				      </div>\
+				   </div>\
+				</div>'
+
+			//Insertar en el HTML
+			$("#ContenedorSolicitudes").append(htmlPanel);
+
+		}
+
+	}else{
+		//Insertar en el HTML el alerta de que no hay datos
+		$("#ContenedorSolicitudes").append('\
+			<div class="col-sm-12">\
+	   			<div class="alert alert-info" role="alert" ><i class="fa fa-info-circle"></i> No se encontraron registros.</div>\
+			</div>'
+			);
+	}
+}
+
+function ObtenerSolicitudesError(){
+	//Insertar en el HTML el alerta de error
+	$("#ContenedorSolicitudes").empty();
+	$("#ContenedorSolicitudes").append('\
+		<div class="col-sm-12">\
+   			<div class="alert alert-danger" role="alert" ><i class="fa fa-exclamation-triangle"></i> No se pudieron obtener los registros del servidor, para reintentar vuelva a recargar la página.</div>\
+		</div>'
+		);
+}
+
+//Devuelve el HTML para indicar que es nuevo para este usuario si corresponde, sino devuelve cadena vacía
+function VerificarSiEsNuevoHtml(registro){
+	var etiquetaNuevo = '<span class="label label-danger">Nuevo</span>';
+
+	//Verificar el valor de la propiedad
+	if (registro){
+		return etiquetaNuevo;
+	}else{
+		return '';
+	}
+}
+
+//Convierte la fecha en una cadena amigable
+function ConvertirFechaToString(strFecha){
+	var fecha = new Date(strFecha);
+
+	var cadena = " " + DosCaracteres(fecha.getDate()) + "/" + DosCaracteres(fecha.getMonth() + 1) + "/" + fecha.getFullYear() + " - " + DosCaracteres(fecha.getHours()) + ":" + DosCaracteres(fecha.getMinutes()) + ":" + DosCaracteres(fecha.getSeconds()) + " hs";
+	
+	return cadena;
+}
+
+//Convertir a dos caracteres
+function DosCaracteres(nro){
+	var str = nro.toString();
+
+	if (str.length === 1){
+		return ("0" + str);
+	}else{
+		return (str);
+	}
 }

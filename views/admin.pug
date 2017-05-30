@@ -34,7 +34,7 @@ block VistaCuerpo
 						span(style="color: #22b511")
 							i.fa.fa-plus-circle(onclick='AgregarInfo();')
 
-	#ContenedorFotos.row(style="padding-left: 15px")
+	#ContenedorFotos.row(style="padding-left: 15px; display: none")
 		.col-sm-12
 			div(style="font-size: 30px; margin-bottom: 30px")
 				|Galeria de Fotos
@@ -44,3 +44,13 @@ block VistaCuerpo
 					label(for='files') Seleccione un archivo:
 					input#files(type='file', name='files[]')
 			output#list
+				.col-sm-12
+					.alert.alert-info(role='info')
+						i.fa.fa-spinner.fa-spin
+						|  Cargando...
+
+	#ContenedorSolicitudes.row(style="padding-left: 15px; display: none")
+		.col-sm-12
+			.alert.alert-info(role='info')
+				i.fa.fa-spinner.fa-spin
+				|  Cargando...

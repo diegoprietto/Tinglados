@@ -30,7 +30,7 @@ html
 							span.icon-bar
 							span.icon-bar
 							span.icon-bar
-						a.navbar-brand(href='#') Tinglado
+						a.navbar-brand(href='#') Argen-Tech SA
 
 					// Collect the nav links, forms, and other content for toggling
 					#bs-example-navbar-collapse-1.collapse.navbar-collapse
@@ -44,9 +44,11 @@ html
 									ul.dropdown-menu
 										li(onclick='if (VisionInfo) VisionInfo();')
 											a(href='#') Actualizar información
-										li.divider(role='separator')
 										li(onclick='if (VisionFotos) VisionFotos();')
 											a(href='#') Actualizar fotos
+										li.divider(role='separator')
+										li(onclick='if (VisionSolicitudes) VisionSolicitudes();')
+											a(href='#') Solicitudes de presupuestos
 						form.navbar-form.navbar-left
 							//- Controles Izquierda
 						ul.nav.navbar-nav.navbar-right

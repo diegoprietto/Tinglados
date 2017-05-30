@@ -357,6 +357,40 @@ app.post('/login', function(req, res){
     }
 });
 
+
+//Solicitud de registros de usuarios que se contactaron por el formulario de Home
+app.get('/ObtenerSolicitudes', function(req, res){
+  console.log("Acceso a función Ajax ObtenerSolicitudes");
+
+  accesoMongo.obtenerSolicitudes(
+    function () {
+      console.log("Error al intentar obtener la colección Solicitudes");
+
+      //Enviar un flag de Error
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'ERROR'}));
+    },
+    null,
+    function (result) {
+      console.log(result);
+
+      //Analizar los registros vistos y los que no
+      result = AnalizarRegistrosVistos(result, req.session.user.Id);
+
+      //Enviar datos
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'OK', Datos: result}));
+
+      //Actualizar los registros ya vistos
+      setTimeout(function(){ 
+        MarcarComoVistos(result, req.session.user.Id);
+      }, 1000);
+
+    }
+  );
+
+});
+
 //FIN Funciones AJAX**************************************************************************************
 
 
@@ -505,4 +539,43 @@ function obtenerDatosMail(){
 //Buscar datos al iniciar la App
 obtenerDatosMail();
 
-//FIN Server**************************************************************************************
+//ObtenerSolicitudes: Revisa cuales registros son vistos por primera vez por el usuario actual
+//Y asigna ese valor al atributo Nuevo para que en el cliente se muestre si es nuevo o no
+function AnalizarRegistrosVistos(registros, usuario){
+  //Recorrer registros
+  for (var i=0; i<registros.length; i++){
+    //Verificar si el usuario ya vió esta solicitud
+    registros[i].Nuevo = !registros[i].VistoUsuarios.includes(usuario);
+
+    //Borrar propiedad, ya que puede informar nombres de otros usuarios del sistema
+    delete registros[i].VistoUsuarios;
+  }
+
+  return registros;
+}
+
+//Marcar los registros que tienen la marca de Nuevos como ya vistos por el usuario indicado
+function MarcarComoVistos(registros, usuario){
+  var idsNuevos = new Array();
+
+  //Obtener los ids de los registros nuevos
+  for (var i=0; i < registros.length; i++){
+    if (registros[i].Nuevo)
+      idsNuevos.push(registros[i]._id);
+  }
+
+  //Actualizar la BD
+  accesoMongo.ActualizarSolicitudesVistas(
+    function () {
+      console.log("Error al intentar actualizar las solicitudes vistas en la BD");
+    },
+    usuario,
+    idsNuevos,
+    function () {
+      console.log("Éxito en actualizar las solicitudes vistas en la BD");
+    }
+  );
+
+}
+
+//FIN Funciones iniciales**************************************************************************************

@@ -487,4 +487,87 @@ function convertDatosToSolicitudes(datosEntrada){
 	return estructura;
 }
 
+//Obtener registros de Solicitudes de Presupuesto
+Qux.prototype.obtenerSolicitudes = function(error, usuario, callback) {
+
+	//Se conecta a la BD y obtiene los datos
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionSolicitudes);
+
+			//Obtener todos los documentos
+			collection.find({}).sort({Fecha:-1}).toArray(function(err, docs) {
+
+				if (err){
+					//Ocurrió un error
+					if (error) error();
+				}else{
+					console.log(docs)
+
+					db.close();
+
+					if (callback) callback(docs);
+				}
+			});
+		}
+	});
+
+}
+
+//Actualizar las solicitudes vistas indicadas con el usuario indicado
+Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, callback){
+
+	//Se conecta a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionSolicitudes);
+
+			//Obtener y actualizar cada uno de los ids
+
+			console.log("listaIds ######################################################################################");
+			console.log(listaIds);
+
+
+			for (var i=0; i<listaIds.length; i++){
+				collection.findOne({ "_id" : new MongoDb.ObjectID(listaIds[i]) }, function(err, doc) {
+
+					if (err){
+						//Ocurrió un error
+						console.log("Error al intentar actualizar la solicitud " + listaIds[i]);
+					}else{
+
+						console.log("Registro leido ######################################################################################");
+						console.log(doc);
+
+						//Actualizar valor
+						doc.VistoUsuarios.push(usuario);
+
+						//Guardar en la BD actualizado
+						collection.save(doc, function(err, doc) {
+
+							if (err){
+								//Ocurrió un error
+								console.log("Error al intentar actualizar la solicitud " + listaIds[i]);
+							}
+						});
+					}
+
+				});
+
+			}
+		}
+	});
+
+}
+
 exports.Qux = Qux;
