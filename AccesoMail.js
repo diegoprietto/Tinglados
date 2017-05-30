@@ -3,17 +3,35 @@
 var nodemailer = require('nodemailer');
 
 var Asunto = "Consulta de Presupuesto";
-var Desde = "App Tinglado";
+var Desde = "Argentech App";
 var Hacia = "dprsoft@yahoo.com.ar"
+
+//Se utiliza para evitar que se envíen mas de 100 en un día pudiendo ser realizados por robots
+var ControlFraude = {
+	Dia: null,
+	Contador: 0
+}
 
 var Qux = function () {};
 
-Qux.prototype.log = function () {
-	console.log('Modulo AccesoMail.js');
-};
-
 //Envia un correo
 Qux.prototype.enviarMail = function (error, datos, callback){
+
+	//Validar que no se envíen excesivos mails en poco tiempo
+	if (ControlFraude.Dia === (new Date()).getDate()){
+		ControlFraude.Contador++;
+
+		//Verificar cantidad enviada
+		if (ControlFraude.Contador > 100){
+			console.log("Se han recibido demasiados mails en poco tiempo, los próximos consultar en el sitio");
+			if (callback) callback();
+			return;	//No enviar mail
+		}
+	}else{
+		//Inicializar
+		ControlFraude.Dia = (new Date()).getDate();
+		ControlFraude.Contador = 0;
+	}
 
 	//Crear contenido del mail
 	var contenido = "<h3>Un usuario solicitó presupuesto en el sistema:</h3>\

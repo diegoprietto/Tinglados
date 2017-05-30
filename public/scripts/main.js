@@ -39,9 +39,12 @@ function llamarTelCallback(data, textStatus, jqXHR){
 }
 
 function Contacto(){
+	$("#ContactButton").attr("disabled", "disabled");
 	var datos = ObtenerDatosContacto();
 
 	if (ValidarDatos(datos)){
+		$("#ContactButtonNormal").hide();
+		$("#ContactButtonSpin").show();
 		$.ajax({
 			contentType: "application/json",
 			method: "POST",
@@ -112,27 +115,69 @@ function ValidarDatos(datos){
 	}
 
 
-	/////TERMINAR DESARROLLO
+	//Verificar resultados
 	if (msjError.length > 0){
-		////Mostrar errores al usuario
+		//Mostrar errores al usuario
+		$("#ContactButton").removeAttr("disabled");
+
+		$("#AlertErrorContacto").show();
+		$("#AlertExitoContacto").hide();
+
+		var texto = null;
+		for(var i = 0; i < msjError.length; i++){
+			if (i===0)
+				texto = "<i class='fa fa-exclamation-triangle'></i> " + msjError[i];
+			else
+				texto += "<br><i class='fa fa-exclamation-triangle'></i> " + msjError[i];
+		}
+
+		$("#AlertErrorContacto").html(texto);
 
 		return false;
 	}else{
 		//Todo Ok
 
-		////Quitar colores rojos a los campos que pudieran haberse marcado como inválido
+		//Quitar color de advertencia en los controles
+		QuitarColorAdvertenciaPresupuesto();
+
+		$("#AlertErrorContacto").hide();
+		$("#AlertExitoContacto").hide();
 
 		return true;
 	}
 }
 
 function ContactoOk(){
-	$("#ContactButton").attr("disabled", "disabled");
-	alert("Gracias por su contacto, en breve se comunicarán con usted.");
+	$("#ContactButton").hide();
+
+	//Quitar color de advertencia en los controles
+	QuitarColorAdvertenciaPresupuesto();
+
+	$("#AlertErrorContacto").hide();
+	$("#AlertExitoContacto").show();
+	$("#AlertExitoContacto").html("<i class='fa fa-check'></i> Gracias por su contacto, en breve se comunicarán con usted.");
 }
 
 function ContactoError(){
-	alert("Error en el servidor, por favor vuelva a reintentar.");
+	$("#ContactButton").removeAttr("disabled");
+	$("#ContactButtonNormal").show();
+	$("#ContactButtonSpin").hide();
+
+	//Quitar color de advertencia en los controles
+	QuitarColorAdvertenciaPresupuesto();
+
+	$("#AlertErrorContacto").show();
+	$("#AlertExitoContacto").hide();
+	$("#AlertErrorContacto").html("<i class='fa fa-exclamation-triangle'></i> Error en el servidor, por favor vuelva a reintentar.");
+}
+
+function QuitarColorAdvertenciaPresupuesto(){
+	$("#first_name").css("background-color", "");
+	$("#last_name").css("background-color", "");
+	$("#email").css("background-color", "");
+	$("#area_code").css("background-color", "");
+	$("#phone_number").css("background-color", "");
+	$("#message").css("background-color", "");
 }
 
 //Solicitar fotos mas adecuadas para el tamaño de pantalla actual
