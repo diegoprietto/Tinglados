@@ -257,14 +257,16 @@ function permitirSoloCaracteres(texto, caracteres){
 
 var tempoManzanable = null;
 var tempoManzanableInfinite = null;
-var gravedadManzanable = 1.005;
-var velocidadTerminalManzanable = 10;
+var gravedadManzanable = 0.2;
+var velocidadTerminalManzanable = 5;
+var xCursor = 0;
+var yCursor = 0;
 
 function Manzanable(){
-	var posInicial = ($("body").width() * Math.random()).toString();
+	//var posInicial = ($("body").width() * Math.random()).toString();
 	var velInicialX = (Math.random()*2 - 1).toString();
 
-	$("body").append( '<span class="glyphicon glyphicon-apple manzana fa-spin" velX="' + velInicialX + '" velY="1" style="left: ' + posInicial + 'px; top: 0px;" aria-hidden="true"></span>' );
+	$("body").append( '<span class="glyphicon glyphicon-apple manzana fa-spin" velX="' + velInicialX + '" velY="-5" style="left: ' + xCursor + 'px; top: ' + yCursor + 'px;" aria-hidden="true"></span>' );
 
 	if (!tempoManzanable){
 		tempoManzanable = setInterval(function(){ vidaManzanable() }, 1);
@@ -278,7 +280,7 @@ function vidaManzanable(){
 	//Actuar sobre cada manzana
 	$.each(objManzanas, function(index, item){
 		var nuevaPosY = parseFloat($(item).css("top").replace("px", "")) + parseFloat($(item).attr("velY"));
-		var nuevaVelY = parseFloat($(item).attr("velY")) * gravedadManzanable;
+		var nuevaVelY = parseFloat($(item).attr("velY")) + gravedadManzanable;
 		var nuevaPosX = parseFloat($(item).css("left").replace("px", "")) + parseFloat($(item).attr("velX"));
 
 		//Velocidad terminal
@@ -295,13 +297,27 @@ function vidaManzanable(){
 	});
 }
 
-function ManzanableInfinite(){
+function ManzanableInfinite(intervalo){
+	if (!intervalo)
+		intervalo = 500;
+
 	if (tempoManzanableInfinite){
 		clearInterval(tempoManzanableInfinite);
 		tempoManzanableInfinite=null;
+		$("body").removeAttr("onMouseMove");
 	}
 	else{
-		tempoManzanableInfinite = setInterval(function(){ Manzanable() }, 1000);
+		tempoManzanableInfinite = setInterval(function(){ Manzanable() }, intervalo);
+		$("body").attr("onMouseMove", "coordenadas(event);");
 	}
+}
+
+function ManzanableInfiniteX2(){
+	ManzanableInfinite(100);
+}
+
+function coordenadas(event) {
+	 xCursor = event.clientX;
+	 yCursor = event.clientY;
 }
 //******************************************************// Fin Extra
