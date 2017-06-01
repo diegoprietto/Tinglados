@@ -251,3 +251,57 @@ function permitirSoloCaracteres(texto, caracteres){
 
 	return result;
 }
+
+
+//******************************************************// Extra
+
+var tempoManzanable = null;
+var tempoManzanableInfinite = null;
+var gravedadManzanable = 1.005;
+var velocidadTerminalManzanable = 10;
+
+function Manzanable(){
+	var posInicial = ($("body").width() * Math.random()).toString();
+	var velInicialX = (Math.random()*2 - 1).toString();
+
+	$("body").append( '<span class="glyphicon glyphicon-apple manzana fa-spin" velX="' + velInicialX + '" velY="1" style="left: ' + posInicial + 'px; top: 0px;" aria-hidden="true"></span>' );
+
+	if (!tempoManzanable){
+		tempoManzanable = setInterval(function(){ vidaManzanable() }, 1);
+	}
+}
+
+
+function vidaManzanable(){
+	var objManzanas = $(".manzana");
+
+	//Actuar sobre cada manzana
+	$.each(objManzanas, function(index, item){
+		var nuevaPosY = parseFloat($(item).css("top").replace("px", "")) + parseFloat($(item).attr("velY"));
+		var nuevaVelY = parseFloat($(item).attr("velY")) * gravedadManzanable;
+		var nuevaPosX = parseFloat($(item).css("left").replace("px", "")) + parseFloat($(item).attr("velX"));
+
+		//Velocidad terminal
+		if (nuevaVelY > velocidadTerminalManzanable)
+			nuevaVelY = velocidadTerminalManzanable;
+
+		$(item).css("top", nuevaPosY.toString() + "px");
+		$(item).attr("velY", nuevaVelY.toString());
+		$(item).css("left", nuevaPosX.toString() + "px");
+
+		//Eliminar las que se salgan de la pantalla
+		if(nuevaPosY > $("body").height())
+			item.remove();
+	});
+}
+
+function ManzanableInfinite(){
+	if (tempoManzanableInfinite){
+		clearInterval(tempoManzanableInfinite);
+		tempoManzanableInfinite=null;
+	}
+	else{
+		tempoManzanableInfinite = setInterval(function(){ Manzanable() }, 1000);
+	}
+}
+//******************************************************// Fin Extra

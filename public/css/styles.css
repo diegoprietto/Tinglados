@@ -127,3 +127,19 @@
 #linkFace:link, #linkFace:visited, #linkFace:active {
     text-decoration: none;
 }
+
+.manzana{
+	color: red;
+	display: inline-block;
+	position: absolute;
+}
+
+#iconoManzana{
+	margin-right: 5px;
+	color: #F2F2F2;
+	cursor: pointer;
+}
+
+#iconoManzana:hover{
+	color: red;
+}
