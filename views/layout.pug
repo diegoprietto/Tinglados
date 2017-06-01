@@ -36,7 +36,7 @@ html
 					#bs-example-navbar-collapse-1.collapse.navbar-collapse
 						ul.nav.navbar-nav
 							//- Lista de componentes dentro del menú
-							if (rol)
+							if (user && user.Id)
 								li.dropdown
 									a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
 										| Información 
@@ -53,8 +53,23 @@ html
 							//- Controles Izquierda
 						ul.nav.navbar-nav.navbar-right
 							//- Controles Derecha
-							if (rol)
-								<li><a href="/?action=logout">Cerrar Sesión</a></li>
+							if (user && user.Id)
+								li.dropdown
+									a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+										= user.Id
+										span.fa.fa-user(style="margin-left: 5px")
+										span.caret
+									ul.dropdown-menu
+										li(onclick='if (VisionUsuario) VisionUsuario();')
+											a(href='#') Configuración
+										li.divider(role='separator')
+										li
+											a(href="/?action=logout") Cerrar Sesión
+							else
+								li
+									a(href='/login')
+										|Inciar Sesión
+										span.fa.fa-user(style="margin-left: 5px")
 							li
 								a(href='/')
 									|Ir a Home

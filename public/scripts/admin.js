@@ -18,7 +18,8 @@ var estructuraDocumento = '	<li class="media Documento">\
 //Indica cual vistas ya fueron cargadas y no deben volver a cargarse de nuevo
 var VistasCargadas = {
 	fotos: false,
-	solicitudes: false
+	solicitudes: false,
+	usuario: false
 }
 
 $(document).ready(function () {
@@ -119,12 +120,14 @@ function VisionInfo(){
 	$("#ContenedorFotos").hide();
 	$("#ContenedorInfo").show();
 	$("#ContenedorSolicitudes").hide();
+	$("#ContenedorUsuario").hide();
 }
 
 function VisionFotos(){
 	$("#ContenedorFotos").show();
 	$("#ContenedorInfo").hide();
 	$("#ContenedorSolicitudes").hide();
+	$("#ContenedorUsuario").hide();
 
 	//Cargar fotos dinámicamente
 	if (!VistasCargadas.fotos){
@@ -137,11 +140,25 @@ function VisionSolicitudes(){
 	$("#ContenedorFotos").hide();
 	$("#ContenedorInfo").hide();
 	$("#ContenedorSolicitudes").show();
+	$("#ContenedorUsuario").hide();
 
 	//Carga de solicitudes
 	if (!VistasCargadas.solicitudes){
 		VistasCargadas.solicitudes = true;
 		ObtenerSolicitudes();
+	}
+}
+
+function VisionUsuario(){
+	$("#ContenedorFotos").hide();
+	$("#ContenedorInfo").hide();
+	$("#ContenedorSolicitudes").hide();
+	$("#ContenedorUsuario").show();
+
+	//Carga de datos
+	if (!VistasCargadas.usuario){
+		VistasCargadas.usuario = true;
+		ObtenerDatosUsuario();
 	}
 }
 
@@ -422,4 +439,103 @@ function DosCaracteres(nro){
 	}else{
 		return (str);
 	}
+}
+
+//Obtiene mediante Ajax los datos necesarios para la vista Usuario
+function ObtenerDatosUsuario(){
+	$.ajax({
+		contentType: "application/json",
+		method: "GET",
+		url: "ObtenerDatosVistaUsuario",
+		success: function(response) { ObtenerDatosUsuarioOk(response); },
+		error: function(response) { ObtenerDatosUsuarioError(response); }
+	});	
+}
+
+function ObtenerDatosUsuarioOk(result){
+
+	if (result && result.Datos && result.Datos){
+		//Obtener mail de usuario
+		if (result.Datos.mail){
+			$("#usuarioMail").val(result.Datos.mail);
+		}
+
+		//Obtener mail de solicitudes
+		if (result.Datos.mailDestino){
+			$("#usuarioMail").val(result.Datos.mailDestino);
+		}
+
+		//Mostrar los controles y ocultar el spinner
+		$("#ContenedorUsuarioLoading").hide();
+		$("#ContenedorUsuarioCuerpo").show();
+	}else{
+		//No se recibieron datos
+		ObtenerDatosUsuarioError();
+	}
+
+}
+
+function ObtenerDatosUsuarioError(){
+	//Insertar en el HTML el alerta de error
+	$("#ContenedorUsuario").empty();
+	$("#ContenedorUsuario").append('\
+		<div class="col-sm-12">\
+   			<div class="alert alert-danger" role="alert" ><i class="fa fa-exclamation-triangle"></i> No se pudieron obtener los registros del servidor, para reintentar vuelva a recargar la página.</div>\
+		</div>');
+}
+
+//Evento click del botón guardar de la vista Usuario
+function UsuarioGuardar(){
+	var estructuraDatos = {
+		mail: $("#usuarioMail").val(),
+		mailDestino: $("#usuarioMailSolicitud").val()
+	}
+
+	//Deshabilitar el botón
+	$("#usuarioGuardar").attr("disabled", "disabled");
+	$("#usuarioGuardar .fa-floppy-o").hide();
+	$("#usuarioGuardar .fa-spinner").show();
+	//Ocultar alerta de error (Si estuviera visible)
+	$(".usuarioAlertaError").remove();
+
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		url: "GuardarUsuario",
+		data: JSON.stringify({ content: estructuraDatos }),
+		success: function(response) { UsuarioGuardarOk(response); },
+		error: function(response) { UsuarioGuardarError(response); }
+	});	
+}
+
+function UsuarioGuardarOk(result){
+	//Insertar en el HTML el alerta de error
+	$("#ContenedorUsuario").append('\
+		<div class="col-sm-12 usuarioAlertaError">\
+   			<div class="alert alert-success" role="alert" ><i class="fa fa-check"></i> Se actualizó con éxito.</div>\
+		</div>');
+
+	//Restablecer botón de Guardar
+	$("#usuarioGuardar .fa-floppy-o").show();
+	$("#usuarioGuardar .fa-spinner").hide();
+
+	//Reestablecer controles de formulario
+	$("#usuarioMail").attr("disabled", "disabled");
+	$("#usuarioMailButton").removeAttr("disabled");
+
+	$("#usuarioMailSolicitud").attr("disabled", "disabled");
+	$("#usuarioMailSolicitudButton").removeAttr("disabled");
+}
+
+function UsuarioGuardarError(result){
+	//Insertar en el HTML el alerta de error
+	$("#ContenedorUsuario").append('\
+		<div class="col-sm-12 usuarioAlertaError">\
+   			<div class="alert alert-danger" role="alert" ><i class="fa fa-exclamation-triangle"></i> Error al intenar conectarse con el servidor, vuelva a reintentar</div>\
+		</div>');
+
+	//Volver a habilitar el botón para permitir reintentar
+	$("#usuarioGuardar").removeAttr("disabled");
+	$("#usuarioGuardar .fa-floppy-o").show();
+	$("#usuarioGuardar .fa-spinner").hide();
 }

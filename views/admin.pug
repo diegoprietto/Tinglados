@@ -54,3 +54,44 @@ block VistaCuerpo
 			.alert.alert-info(role='info')
 				i.fa.fa-spinner.fa-spin
 				|  Cargando...
+
+	#ContenedorUsuario.row(style="padding-left: 15px; display: none")
+		#ContenedorUsuarioLoading.col-sm-12
+			.alert.alert-info(role='info')
+				i.fa.fa-spinner.fa-spin
+				|  Cargando...
+
+		#ContenedorUsuarioCuerpo.col-sm-12(style="display: none;")
+			form.form-horizontal
+				.form-group
+					label.col-sm-2.control-label Usuario
+					.col-sm-6
+						p.form-control-static 
+							= user.Id
+				.form-group
+					label.col-sm-2.control-label(for='usuarioPass') Password
+					.col-sm-6
+						input#usuarioPass.form-control(type='password', placeholder='Password', disabled)
+					button#usuarioPassButton.col-sm-1.btn.btn-danger(type='button', onclick="$('#usuarioPass').removeAttr('disabled'); $('#usuarioPassButton').attr('disabled', 'disabled');")
+						|Cambiar
+						span.fa.fa-pencil-square-o(style="margin-left: 5px")
+				.form-group
+					label.col-sm-2.control-label(for='usuarioMail') Mail:
+					.col-sm-6
+						input#usuarioMail.form-control(type='email', placeholder='Mail', disabled)
+					button#usuarioMailButton.col-sm-1.btn.btn-primary(type='button', onclick="$('#usuarioMail').removeAttr('disabled'); $('#usuarioMailButton').attr('disabled', 'disabled'); $('#usuarioGuardar').removeAttr('disabled');")
+						|Cambiar
+						span.fa.fa-pencil-square-o(style="margin-left: 5px")
+				.form-group
+					label.col-sm-2.control-label(for='usuarioMailSolicitud') Destino de las solicitudes de presupuestos:
+					.col-sm-6
+						input#usuarioMailSolicitud.form-control(type='email', placeholder='Mail', disabled)
+					button#usuarioMailSolicitudButton.col-sm-1.btn.btn-primary(type='button', onclick="$('#usuarioMailSolicitud').removeAttr('disabled'); $('#usuarioMailSolicitudButton').attr('disabled', 'disabled');$('#usuarioGuardar').removeAttr('disabled');")
+						|Cambiar
+						span.fa.fa-pencil-square-o(style="margin-left: 5px")
+				.form-group
+					.col-sm-offset-2.col-sm-10
+						button#usuarioGuardar.btn.btn-success(type='button', disabled, onclick='UsuarioGuardar();')
+							|Guardar
+							span.fa.fa-floppy-o(style="margin-left: 5px")
+							span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none")

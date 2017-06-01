@@ -2,12 +2,14 @@
 
 var MongoClient = require('mongodb').MongoClient;
 var MongoDb = require('mongodb');
+var async = require("async");
 
 var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.net:27017,cluster0-shard-00-01-ngi72.mongodb.net:27017,cluster0-shard-00-02-ngi72.mongodb.net:27017/tinglado?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
 var nombreColeccionInfo = "Info";
 var nombreColeccionFoto = "Foto";
 var nombreColeccionUsers = "Users";
 var nombreColeccionSolicitudes = "Solicitudes";
+var nombreColeccionDatosMail = "Mail";
 
 //Memorias cachés para recursos
 var cacheColeccionInfo=null;
@@ -488,7 +490,7 @@ function convertDatosToSolicitudes(datosEntrada){
 }
 
 //Obtener registros de Solicitudes de Presupuesto
-Qux.prototype.obtenerSolicitudes = function(error, usuario, callback) {
+Qux.prototype.obtenerSolicitudes = function(error, callback) {
 
 	//Se conecta a la BD y obtiene los datos
 	MongoClient.connect(uri, function(err, db) {
@@ -565,6 +567,146 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 				});
 
 			}
+		}
+	});
+
+}
+
+//Actualizar las solicitudes vistas indicadas con el usuario indicado
+Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback){
+
+	//Se conecta a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+		  	//Referenciar a la colección
+			var collection;
+
+		    //Enviar mail y almacenar en BD en paralelo
+		    async.parallel([
+		        function(callback) {
+
+					//Verificar si se debe actualizar datos del usuario
+					if (datos && (datos.pass || datos.mail)){
+						//Referenciar a la colección
+						collection = db.collection(nombreColeccionUsers);
+
+						collection.findOne({ "Id" : usuario }, function(err, doc) {
+
+							if (err){
+								//Ocurrió un error
+								console.log("Error al buscar el usuario " + usuario + " en la colección " + nombreColeccionUsers);
+								//Indicar error
+				                callback("Error al buscar el usuario " + usuario + " en la colección " + nombreColeccionUsers, null);
+
+							}else if(doc){
+								console.log("Registro leido");
+								console.log(doc);
+
+								//Actualizar valores
+								if (datos.pass) doc.Pass = datos.pass;
+								if (datos.mail) doc.Mail = datos.mail;
+
+								//Guardar en la BD actualizado
+								collection.save(doc, function(err, doc) {
+
+									if (err){
+										//Ocurrió un error
+										console.log("Error al intentar actualizar los datos de usuario");
+										//Indicar error
+						                callback("Error al intentar actualizar los datos de usuario", null);
+									}else{
+										//Actualizado con éxito
+										console.log("Registro actualizado con éxito");
+										cacheColeccionUsers=null;
+										//No hay datos para actualizar en esta colección, indicar éxito
+						                callback(null, "Registro actualizado con éxito");
+									}
+								});
+							}else{
+								//Ocurrió un error
+								console.log("No se encontró el usuario " + usuario + " en la colección " + nombreColeccionUsers);
+								//Indicar error
+				                callback("No se encontró el usuario " + usuario + " en la colección " + nombreColeccionUsers, null);
+							}
+
+						});
+					}else{
+						//No hay datos para actualizar en esta colección, indicar éxito
+		                callback(null, "Sin datos");
+					}
+		        },
+		        function(callback) {
+
+					//Verificar si se debe actualizar datos para el mail
+					if (datos && datos.mailDestino){
+						//Referenciar a la colección
+						collection = db.collection(nombreColeccionDatosMail);
+
+						collection.findOne({}, function(err, doc) {
+
+							if (err){
+								//Ocurrió un error
+								console.log("Error al buscar los datos para NodeMailer en la colección " + nombreColeccionDatosMail);
+								//Indicar error
+				                callback("Error al buscar los datos para NodeMailer en la colección " + nombreColeccionDatosMail, null);
+							}else if(doc){
+								console.log("Registro leido");
+								console.log(doc);
+
+								//Actualizar valorres
+								doc.MailDestino = datos.mailDestino;
+
+								//Guardar en la BD actualizado
+								collection.save(doc, function(err, doc) {
+
+									if (err){
+										//Ocurrió un error
+										console.log("Error al intentar actualizar los datos de NodeMailer");
+										//Indicar error
+						                callback("Error al intentar actualizar los datos de NodeMailer", null);
+									}else{
+										//Actualizado con éxito
+										console.log("Registro actualizado con éxito");
+										//No hay datos para actualizar en esta colección, indicar éxito
+						                callback(null, "Registro actualizado con éxito");
+									}
+								});
+							}else{
+								//Ocurrió un error
+								console.log("No se encontraron los datos para NodeMailer en la colección " + nombreColeccionDatosMail);
+								//Indicar error
+				                callback("No se encontraron los datos para NodeMailer en la colección " + nombreColeccionDatosMail, null);
+							}
+
+						});
+					}else{
+						//No hay datos para actualizar en esta colección, indicar éxito
+		                callback(null, "Sin datos");
+					}
+
+		        }
+		    ],
+		    // Parallel callback
+		    function(err, results) {
+		      //Verificar resultado
+		      if (err) {
+		        console.log("Error en las funciones en paralelo para actualizar datos de usuario");
+		        console.log(err)
+
+		        if (error) error(err);
+		      }
+		      else{
+		        //Éxito
+		        console.log("Funciones en paralelo para actualizar datos de usuario realizado con éxito");
+
+		        if (callback) callback(results);
+		      }
+		    });
+
 		}
 	});
 

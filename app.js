@@ -370,7 +370,6 @@ app.get('/ObtenerSolicitudes', function(req, res){
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify({ Resultado: 'ERROR'}));
     },
-    null,
     function (result) {
       console.log(result);
 
@@ -389,6 +388,65 @@ app.get('/ObtenerSolicitudes', function(req, res){
     }
   );
 
+});
+
+
+//Solicitud de datos para la vista usuario
+app.get('/ObtenerDatosVistaUsuario', function(req, res){
+  console.log("Acceso a función Ajax ObtenerDatosVistaUsuario");
+
+  //Armar respuesta
+  var estructuraDatos = {
+    mail: req.session.user.Mail,
+    mailDestino: datosMail.MailDestino
+  }
+
+  //Enviar datos
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({ Resultado: 'OK', Datos: estructuraDatos}));
+});
+
+
+//Actualizar datos de usuario y mail de destino de solicitudes
+app.post('/GuardarUsuario', function(req, res){
+  console.log("Acceso a función Ajax GuardarUsuario");
+
+  var datos = req.body.content;
+
+
+  if (datos){
+
+    //Almacenar la colección de fotos
+    accesoMongo.ActualizarDatosUsuario(
+      function () {
+        console.log("Error al intentar actualizar las colecciones.");
+
+        //Enviar un flag de Error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERROR'}));
+      },
+      req.session.user.Id,
+      datos,
+      function (result) {
+        //Actualizar datos localmente
+        if (datos.pass) req.session.user.Pass = datos.pass;
+        if (datos.mail) req.session.user.Mail = datos.mail;
+        if (datos.mailDestino) accesoMail.actualizarMailDestino(datos.mailDestino);
+
+        //Enviar un flag de éxito
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'OK'}));
+      }
+    );
+
+  }else{
+    //Sin datos de entrada
+    console.log("Sin datos");
+
+    //Enviar un flag de Error
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify({ Resultado: 'ERROR', Info: "Error de servidor, no se recibieron datos"}));
+  }
 });
 
 //FIN Funciones AJAX**************************************************************************************
@@ -463,9 +521,10 @@ function esAdmin(req, sesionCerrada){
 //Administración del sitio
 app.get('/admin', checkSignIn, function(req, res){
   accesoMongo.obtenerInfo(null, false, true, function(data){
-    //Obtener rol
-    var rol = req.session.user.Rol;
-    res.render('admin', {info: data, rol: rol});
+
+    console.log({info: data, user: req.session.user});
+
+    res.render('admin', {info: data, user: req.session.user});
   });
 });
 
@@ -532,6 +591,10 @@ function obtenerDatosMail(){
       console.log(result);
 
       datosMail = result;
+      //Actualizar el mail de destino de las solicitudes de presupuesto
+      if (result && result.MailDestino){
+        accesoMail.actualizarMailDestino(result.MailDestino);
+      }
     }
   );
 }

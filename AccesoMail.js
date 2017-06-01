@@ -4,7 +4,7 @@ var nodemailer = require('nodemailer');
 
 var Asunto = "Consulta de Presupuesto";
 var Desde = "Argentech App";
-var Hacia = "dprsoft@yahoo.com.ar"
+var Hacia = ""
 
 //Se utiliza para evitar que se envíen mas de 100 en un día pudiendo ser realizados por robots
 var ControlFraude = {
@@ -13,6 +13,11 @@ var ControlFraude = {
 }
 
 var Qux = function () {};
+
+//Actualiza el mail de destino
+Qux.prototype.actualizarMailDestino = function(mailDestino){
+	Hacia = mailDestino;
+}
 
 //Envia un correo
 Qux.prototype.enviarMail = function (error, datos, callback){

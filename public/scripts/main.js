@@ -33,7 +33,7 @@ function llamarTel(){
 
 function llamarTelCallback(data, textStatus, jqXHR){
 	if (textStatus === 'success' && data && data.t1 && data.t2){
-		$(".botonLlamar").html(data.t1 + data.t2);
+		$(".botonLlamar").html("<a href='tel:" + data.t1 + data.t2 + "'>" + data.t1 + data.t2 + "</a>");
 		$(".botonLlamar").off( "click" );
 	}
 }
