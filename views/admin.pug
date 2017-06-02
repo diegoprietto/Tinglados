@@ -72,13 +72,13 @@ block VistaCuerpo
 					label.col-sm-2.control-label(for='usuarioPass') Password
 					.col-sm-6
 						input#usuarioPass.form-control(type='password', placeholder='Password', disabled)
-					button#usuarioPassButton.col-sm-1.btn.btn-danger(type='button', onclick="$('#usuarioPass').removeAttr('disabled'); $('#usuarioPassButton').attr('disabled', 'disabled');")
+					button#usuarioPassButton.col-sm-1.btn.btn-danger(type='button', onclick="ChangePw()")
 						|Cambiar
 						span.fa.fa-pencil-square-o(style="margin-left: 5px")
 				.form-group
 					label.col-sm-2.control-label(for='usuarioMail') Mail:
 					.col-sm-6
-						input#usuarioMail.form-control(type='email', placeholder='Mail', disabled)
+						input#usuarioMail.form-control(type='email', placeholder='Mail', disabled='disabled')
 					button#usuarioMailButton.col-sm-1.btn.btn-primary(type='button', onclick="$('#usuarioMail').removeAttr('disabled'); $('#usuarioMailButton').attr('disabled', 'disabled'); $('#usuarioGuardar').removeAttr('disabled');")
 						|Cambiar
 						span.fa.fa-pencil-square-o(style="margin-left: 5px")
@@ -94,4 +94,45 @@ block VistaCuerpo
 						button#usuarioGuardar.btn.btn-success(type='button', disabled, onclick='UsuarioGuardar();')
 							|Guardar
 							span.fa.fa-floppy-o(style="margin-left: 5px")
-							span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none")
+							span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+
+			#modalPass.modal.fade(tabindex='-1', role='dialog')
+				.modal-dialog(role='document')
+					.modal-content
+						.modal-header
+							button.close(type='button', data-dismiss='modal', aria-label='Close')
+								span(aria-hidden='true') ×
+							h4.modal-title
+								|Actualizar datos de usuario
+								span.fa.fa-key(style="margin-left: 5px;")
+						.modal-body
+
+							form
+								.form-group
+									label(for='usuarioOldPass') Ingrese el password actual
+									input#usuarioOldPass.form-control(type='password', placeholder='Password Actual')
+								.form-group
+									label(for='usuarioNewPass') Ingrese el nuevo password
+									input#usuarioNewPass.form-control(type='password', placeholder='Nuevo Password')
+								.form-group
+									label(for='usuarioNewPass2') Repita el nuevo password por seguridad
+									input#usuarioNewPass2.form-control(type='password', placeholder='Repita Nuevo Password')
+								button#ConfirmChangePwButton.btn.btn-primary(type='button', onclick="ConfirmChangePw()")
+									|Actualizar
+									span.fa.fa-floppy-o(style="margin-left: 5px")
+									span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+								.col-sm-12
+									#AlertExitoModal.alert.alert-success(role='alert', style='display: none;')
+										i.fa.fa-check
+										span
+											| Se guadaron los cambios con éxito
+									#AlertErrorModal.alert.alert-danger(role='alert', style='display: none;')
+										i.fa.fa-exclamation-triangle
+										span
+											| Error
+
+						.modal-footer
+							button.btn.btn-default(type='button', data-dismiss='modal') Cerrar
+					// /.modal-content
+				// /.modal-dialog
+			// /.modal

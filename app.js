@@ -412,9 +412,21 @@ app.post('/GuardarUsuario', function(req, res){
   console.log("Acceso a función Ajax GuardarUsuario");
 
   var datos = req.body.content;
-
+  console.log("###Datos obtenidos");
+  console.log(datos);
 
   if (datos){
+
+    //En caso de requerir password verificar que esté correcto
+    if (datos.oldPass || datos.pass){
+      if (datos.oldPass !== req.session.user.Pass){
+        //Password incorrecto, informar y salir
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'ERRORPASS', Info: "El password actual es incorrecto."}));
+
+        return;
+      }
+    }
 
     //Almacenar la colección de fotos
     accesoMongo.ActualizarDatosUsuario(
@@ -431,7 +443,11 @@ app.post('/GuardarUsuario', function(req, res){
         //Actualizar datos localmente
         if (datos.pass) req.session.user.Pass = datos.pass;
         if (datos.mail) req.session.user.Mail = datos.mail;
-        if (datos.mailDestino) accesoMail.actualizarMailDestino(datos.mailDestino);
+        if (datos.mailDestino){
+          //Actualizar localmente
+          datosMail.MailDestino = datos.mailDestino;
+          accesoMail.actualizarMailDestino(datos.mailDestino);
+        }
 
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');

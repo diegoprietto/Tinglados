@@ -575,6 +575,9 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
 Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback){
 
+	console.log("###Datos obtenidos en el módulo AccesoMongo");
+	console.log(datos);
+
 	//Se conecta a la BD
 	MongoClient.connect(uri, function(err, db) {
 
@@ -585,9 +588,12 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		  	//Referenciar a la colección
 			var collection;
 
-		    //Enviar mail y almacenar en BD en paralelo
+		    //Actualizar 2 colecciones BD en paralelo
 		    async.parallel([
 		        function(callback) {
+
+	        		console.log("###Datos en primer función paralela");
+					console.log(datos);
 
 					//Verificar si se debe actualizar datos del usuario
 					if (datos && (datos.pass || datos.mail)){
@@ -641,6 +647,9 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		        },
 		        function(callback) {
 
+	        		console.log("###Datos en segunda función paralela");
+					console.log(datos);
+
 					//Verificar si se debe actualizar datos para el mail
 					if (datos && datos.mailDestino){
 						//Referenciar a la colección
@@ -685,6 +694,8 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 						});
 					}else{
 						//No hay datos para actualizar en esta colección, indicar éxito
+						console.log("No se envió a actualizar el mail de destino");
+						console.log(datos);
 		                callback(null, "Sin datos");
 					}
 

@@ -462,7 +462,7 @@ function ObtenerDatosUsuarioOk(result){
 
 		//Obtener mail de solicitudes
 		if (result.Datos.mailDestino){
-			$("#usuarioMail").val(result.Datos.mailDestino);
+			$("#usuarioMailSolicitud").val(result.Datos.mailDestino);
 		}
 
 		//Mostrar los controles y ocultar el spinner
@@ -486,10 +486,15 @@ function ObtenerDatosUsuarioError(){
 
 //Evento click del botón guardar de la vista Usuario
 function UsuarioGuardar(){
-	var estructuraDatos = {
-		mail: $("#usuarioMail").val(),
-		mailDestino: $("#usuarioMailSolicitud").val()
-	}
+	var estructuraDatos = new Object();
+
+	debugger;
+
+	if ($("#usuarioMailButton").attr('disabled') === 'disabled')
+		estructuraDatos.mail = $("#usuarioMail").val();
+
+	if ($("#usuarioMailSolicitudButton").attr('disabled') === 'disabled')
+		estructuraDatos.mailDestino = $("#usuarioMailSolicitud").val();
 
 	//Deshabilitar el botón
 	$("#usuarioGuardar").attr("disabled", "disabled");
@@ -509,7 +514,7 @@ function UsuarioGuardar(){
 }
 
 function UsuarioGuardarOk(result){
-	//Insertar en el HTML el alerta de error
+	//Insertar en el HTML el alerta de éxito
 	$("#ContenedorUsuario").append('\
 		<div class="col-sm-12 usuarioAlertaError">\
    			<div class="alert alert-success" role="alert" ><i class="fa fa-check"></i> Se actualizó con éxito.</div>\
@@ -538,4 +543,99 @@ function UsuarioGuardarError(result){
 	$("#usuarioGuardar").removeAttr("disabled");
 	$("#usuarioGuardar .fa-floppy-o").show();
 	$("#usuarioGuardar .fa-spinner").hide();
+}
+
+function ChangePw(){
+	$("#modalPass").modal("show");
+}
+
+function ConfirmChangePw(){
+	var estructuraDatos = {
+		oldPass: $("#usuarioOldPass").val(),
+		pass: $("#usuarioNewPass").val()
+	}
+
+	//Validar
+	if ($("#usuarioOldPass").val().length === 0){
+		//Informar error
+		$("#AlertErrorModal").show();
+		$("#AlertErrorModal span").text("Ingrese el password actual.");
+		return;
+	}
+	if ($("#usuarioNewPass").val().length === 0){
+		//Informar error
+		$("#AlertErrorModal").show();
+		$("#AlertErrorModal span").text("Ingrese el nuevo password.");
+		return;
+	}
+	if ($("#usuarioNewPass2").val().length === 0){
+		//Informar error
+		$("#AlertErrorModal").show();
+		$("#AlertErrorModal span").text("Ingrese el nuevo password en ambos campos.");
+		return;
+	}else if($("#usuarioNewPass").val() !== $("#usuarioNewPass2").val()){
+		//Informar error
+		$("#AlertErrorModal").show();
+		$("#AlertErrorModal span").text("El nuevo password y la repetición no coinciden.");
+		return;
+	}
+
+	//Deshabilitar controles
+	$("#ConfirmChangePwButton").attr("disabled", "disabled");
+	$("#ConfirmChangePwButton .fa-floppy-o").hide();
+	$("#ConfirmChangePwButton .fa-spinner").show();
+	//Ocultar alertas (Si alguna estuviera visible)
+	$("#AlertExitoModal").hide();
+	$("#AlertErrorModal").hide();
+
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		url: "GuardarUsuario",
+		data: JSON.stringify({ content: estructuraDatos }),
+		success: function(response) { ConfirmChangePwOk(response); },
+		error: function(response) { ConfirmChangePwError(response); }
+	});	
+}
+
+function ConfirmChangePwOk(result){
+	//Verificar respuesta del servidor
+	if (result && result.Resultado){
+
+		if (result.Resultado === 'ERRORPASS'){
+			//Password incorrecto
+			$("#AlertErrorModal").show();
+			$("#AlertErrorModal span").text(result.Info ? result.Info : "El password actual es incorrecto.");
+
+		}else if (result.Resultado === 'OK'){
+			//Informar éxito
+			$("#AlertExitoModal").show();
+
+		}else{
+			//Respuesta inesperada
+			$("#AlertErrorModal").show();
+			$("#AlertErrorModal span").text("Respuesta inesperada por parte del servidor (" + result.Resultado + "), vuelva a reintentar, si el problema persiste contacte con el desarrollador.");
+		}
+
+	}else{
+		//Respuesta inesperada
+		$("#AlertErrorModal").show();
+		$("#AlertErrorModal span").text("El servidor no envió ningún dato, vuelva a reintentar, si el problema persiste contacte con el desarrollador.");
+	}
+
+	//Reestablecer botón guardar
+	$("#ConfirmChangePwButton").removeAttr("disabled");
+	$("#ConfirmChangePwButton .fa-floppy-o").show();
+	$("#ConfirmChangePwButton .fa-spinner").hide();
+}
+
+function ConfirmChangePwError(result){
+	//Informar error
+	$("#AlertErrorModal").show();
+	$("#AlertErrorModal span").text("Error en la conexión con el servidor, vuelva a intentar.");
+
+	//Reestablecer botón guardar
+	$("#ConfirmChangePwButton").removeAttr("disabled");
+	$("#ConfirmChangePwButton .fa-floppy-o").show();
+	$("#ConfirmChangePwButton .fa-spinner").hide();
 }
