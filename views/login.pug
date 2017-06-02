@@ -5,7 +5,17 @@ block VistaLinks
 	link(href="css/login.css", rel="stylesheet")
 
 block VistaCuerpo
-	form(action="", method="POST", onSubmit="return false;")
-		input#id(name="id" type="text" required placeholder="Usuario")
-		input#pass(name="password" type="password" required placeholder="Contraseña")
-		button#init(type="button", onclick="log();") Iniciar Sesión
+	form(action="", method="POST", onSubmit="return false;", class="col-sm-6 col-xs-12 col-md-3")
+		.form-group
+			label(for='id') Usuario
+			input#id.form-control(name="id" type="text" required placeholder="Usuario")
+		.form-group
+			label(for='pass') Contraseña
+			input#pass.form-control(name="password" type="password" required placeholder="Contraseña")
+		button#init.btn.btn-primary(type="button", onclick="log();") Iniciar Sesión
+
+	.col-sm-12.col-xs-12.col-md-12
+		#AlertError.alert.alert-danger(role='alert', style='display: none;')
+			i.fa.fa-exclamation-triangle(style="margin-right: 5px;")
+			span
+				|Error
