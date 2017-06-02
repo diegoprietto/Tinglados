@@ -44,16 +44,11 @@ app.set('view engine', 'pug');
 
 //Ajax: Telefono
 app.get('/getTel', function(req, res){
-	console.log("Acceso a función Ajax getTel");
-
 	res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ t1: '11-', t2: '6468-6615' }));
 });
 
 app.post('/GuardarInfo', function(req, res){
-  console.log("Acceso a función Ajax GuardarInfo");
-
-  console.log(req.body.content);
 
   var datos = req.body.content;
 
@@ -61,7 +56,7 @@ app.post('/GuardarInfo', function(req, res){
 
     accesoMongo.guardarInfo(
       function () {
-        console.log("Error al intentar actualizar la colección Info");
+        console.log("GuardarInfo: Error al intentar actualizar la colección Info");
 
         //Enviar un flag de Error
         res.setHeader('Content-Type', 'application/json');
@@ -69,7 +64,6 @@ app.post('/GuardarInfo', function(req, res){
       },
       datos,
       function (result) {
-        console.log(result);
 
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');
@@ -79,7 +73,7 @@ app.post('/GuardarInfo', function(req, res){
 
   }else{
     //Sin datos de entrada
-    console.log("Sin datos");
+    console.log("GuardarInfo: Sin datos en el requerimiento");
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
@@ -88,7 +82,6 @@ app.post('/GuardarInfo', function(req, res){
 });
 
 app.post('/GuardarFoto', function(req, res){
-  console.log("Acceso a función Ajax GuardarFoto");
 
   var datos = req.body.content;
 
@@ -97,7 +90,7 @@ app.post('/GuardarFoto', function(req, res){
 
     accesoJimp.obtenerCategorias(
       function () {
-        console.log("Error al intentar calcular las dimensiones de la imagen");
+        console.log("GuardarFoto: Error al intentar calcular las dimensiones de la imagen");
 
         //Enviar un flag de Error
         res.setHeader('Content-Type', 'application/json');
@@ -107,8 +100,6 @@ app.post('/GuardarFoto', function(req, res){
       function (result) {
         //'result' es un array con las dimensiones de las fotos calculadas en orden de mayor a menor dimensión
 
-        console.log("Creando registro para almacenar las fotos en la BD");
-
         var registro = {
           BinarioXL: result[0],
           BinarioL: result[1],
@@ -116,12 +107,10 @@ app.post('/GuardarFoto', function(req, res){
           BinarioS: result[3]
         };
 
-        console.log("Se procede al guardado de fotos");
-
         //Almacenar la colección de fotos
         accesoMongo.guardarFoto(
           function () {
-            console.log("Error al intentar actualizar la colección Foto");
+            console.log("GuardarFoto: Error al intentar actualizar la colección Foto");
 
             //Enviar un flag de Error
             res.setHeader('Content-Type', 'application/json');
@@ -139,7 +128,7 @@ app.post('/GuardarFoto', function(req, res){
 
   }else{
     //Sin datos de entrada
-    console.log("Sin datos");
+    console.log("GuardarFoto: Sin datos en el requerimiento.");
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
@@ -148,9 +137,6 @@ app.post('/GuardarFoto', function(req, res){
 });
 
 app.post('/BorrarFoto', function(req, res){
-  console.log("Acceso a función Ajax BorrarFoto");
-
-  console.log(req.body.content);
 
   var idFoto = req.body.content;
 
@@ -166,7 +152,6 @@ app.post('/BorrarFoto', function(req, res){
       },
       idFoto,
       function (result) {
-        console.log(result);
 
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');
@@ -176,7 +161,7 @@ app.post('/BorrarFoto', function(req, res){
 
   }else{
     //Sin datos de entrada
-    console.log("Sin datos");
+    console.log("BorrarFoto: Sin datos en el requerimiento.");
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
@@ -185,9 +170,6 @@ app.post('/BorrarFoto', function(req, res){
 });
 
 app.post('/Contacto', function(req, res){
-  console.log("Acceso a función Ajax Contacto");
-
-  console.log(req.body.content);
 
   var datos = req.body.content;
 
@@ -203,15 +185,13 @@ app.post('/Contacto', function(req, res){
             //Proceso de envío de mail
             accesoMail.enviarMail(
               function () {
-                console.log("Error al intentar enviar mail");
-                console.log(datos);
+                console.log("Contacto: Error al intentar enviar mail");
 
                 //Indicar error
                 callback("Error al intentar enviar mail", null);
               },
               datos,
               function (result) {
-                console.log(result);
 
                 //Indicar Éxito
                 callback(null, result);
@@ -223,15 +203,13 @@ app.post('/Contacto', function(req, res){
           //Proceso de actualización en BD
           accesoMongo.guardarSolicitud(
               function () {
-                console.log("Error al intentar almacenar en BD");
-                console.log(datos);
+                console.log("guardarSolicitud: Error al intentar almacenar en BD");
 
                 //Indicar error
                 callback("Error al intentar almacenar en BD", null);
               },
               datos,
               function (result) {
-                console.log(result);
 
                 //Indicar Éxito
                 callback(null, result);
@@ -244,16 +222,13 @@ app.post('/Contacto', function(req, res){
       //Verificar resultado
       if (err) {
         console.log("Error en las funciones en paralelo para enviar mail de solicitud de presupuesto");
-        console.log(err)
+        console.log(err);
 
         //Enviar un flag de Error
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'ERROR'}));
       }
       else{
-        //Éxito
-        console.log("Funciones en paralelo para enviar mail de solicitud de presupuesto realizado con éxito");
-
         //Enviar un flag de éxito
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'OK'}));
@@ -262,7 +237,7 @@ app.post('/Contacto', function(req, res){
 
   }else{
     //Sin datos de entrada
-    console.log("Sin datos");
+    console.log("Contacto: Sin datos en el requerimiento.");
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
@@ -271,19 +246,14 @@ app.post('/Contacto', function(req, res){
 });
 
 app.post('/ObtenerFotos', function(req, res){
-  console.log("Acceso a función Ajax ObtenerFotos");
 
   //Obtener parámetros de entrada
   var datos = req.body.content;
   var anchoCarrousel = null;
 
-  console.log(req.body.content);
-
   //Verificar si se solicita un ancho específico de imagen para carrousel
   if(datos){
     anchoCarrousel = datos;
-    
-    console.log("SIII!, ancho solicitado");
   }
 
   accesoMongo.obtenerFotos(
@@ -296,7 +266,6 @@ app.post('/ObtenerFotos', function(req, res){
     },
     anchoCarrousel,
     function (result) {
-      console.log(result);
 
       //Enviar datos
       res.setHeader('Content-Type', 'application/json');
@@ -307,8 +276,6 @@ app.post('/ObtenerFotos', function(req, res){
 });
 
 app.post('/login', function(req, res){
-    console.log("Acceso a función Ajax login");
-    console.log(req.body.content);
 
     var datos = req.body.content;
 
@@ -329,14 +296,13 @@ app.post('/login', function(req, res){
           res.send(JSON.stringify({ Resultado: 'ERROR'}));
         },
         function (result) {
-          console.log(result);
 
           var encontrado = false;
           for(var i=0; i<result.length; i++){
             if (result[i].Id.toLowerCase() === datos.id.toLowerCase() && result[i].Pass === datos.pass){
               req.session.user = result[i];
               encontrado = true;
-              console.log("LOGIN CORRECTO");
+
               break;
             }
           }
@@ -360,7 +326,6 @@ app.post('/login', function(req, res){
 
 //Solicitud de registros de usuarios que se contactaron por el formulario de Home
 app.get('/ObtenerSolicitudes', function(req, res){
-  console.log("Acceso a función Ajax ObtenerSolicitudes");
 
   accesoMongo.obtenerSolicitudes(
     function () {
@@ -371,7 +336,6 @@ app.get('/ObtenerSolicitudes', function(req, res){
       res.send(JSON.stringify({ Resultado: 'ERROR'}));
     },
     function (result) {
-      console.log(result);
 
       //Analizar los registros vistos y los que no
       result = AnalizarRegistrosVistos(result, req.session.user.Id);
@@ -393,7 +357,6 @@ app.get('/ObtenerSolicitudes', function(req, res){
 
 //Solicitud de datos para la vista usuario
 app.get('/ObtenerDatosVistaUsuario', function(req, res){
-  console.log("Acceso a función Ajax ObtenerDatosVistaUsuario");
 
   //Armar respuesta
   var estructuraDatos = {
@@ -409,11 +372,8 @@ app.get('/ObtenerDatosVistaUsuario', function(req, res){
 
 //Actualizar datos de usuario y mail de destino de solicitudes
 app.post('/GuardarUsuario', function(req, res){
-  console.log("Acceso a función Ajax GuardarUsuario");
 
   var datos = req.body.content;
-  console.log("###Datos obtenidos");
-  console.log(datos);
 
   if (datos){
 
@@ -457,7 +417,7 @@ app.post('/GuardarUsuario', function(req, res){
 
   }else{
     //Sin datos de entrada
-    console.log("Sin datos");
+    console.log("Sin datos en el requerimiento.");
 
     //Enviar un flag de Error
     res.setHeader('Content-Type', 'application/json');
@@ -538,8 +498,6 @@ function esAdmin(req, sesionCerrada){
 app.get('/admin', checkSignIn, function(req, res){
   accesoMongo.obtenerInfo(null, false, true, function(data){
 
-    console.log({info: data, user: req.session.user});
-
     res.render('admin', {info: data, user: req.session.user});
   });
 });
@@ -550,7 +508,7 @@ app.get('/login', function(req, res){
 
 //Cualquier url que no existente, redirigir a Home
 app.all('/*', function (req, res) {
-   console.log("Acceso a url inexistente");
+   console.log("Acceso a url inexistente: " + req.originalUrl);
 
    res.redirect('/');
 })
@@ -563,10 +521,10 @@ app.all('/*', function (req, res) {
 
 function checkSignIn(req, res, next){
     if(req.session.user){
-      console.log("checkSignIn: Usuario con sesión iniciada: " + req.session.user.Id);
+
       next();
     } else {
-      console.log("checkSignIn: Usuario no logueado");
+
       res.redirect('/login');
     }
 }
@@ -604,7 +562,6 @@ function obtenerDatosMail(){
     },
     nombreColeccionDatosMail,
     function (result) {
-      console.log(result);
 
       datosMail = result;
       //Actualizar el mail de destino de las solicitudes de presupuesto
@@ -651,7 +608,7 @@ function MarcarComoVistos(registros, usuario){
     usuario,
     idsNuevos,
     function () {
-      console.log("Éxito en actualizar las solicitudes vistas en la BD");
+      //Éxito
     }
   );
 

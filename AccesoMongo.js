@@ -22,17 +22,12 @@ var cacheColeccionCantFotos=null;
 
 var Qux = function () {};
 
-Qux.prototype.log = function () {
-	console.log('Modulo AccesoMongo.js');
-};
-
 //Devuelve el texto para la información del pié de página
 Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 	
 	//Verificar si estan los datos en caché
 	if (usarCache && cacheColeccionInfo){
 
-		console.log("Acierto en caché: Colección " + nombreColeccionInfo);
 		if (callback) callback(cacheColeccionInfo);
 
 	}else{
@@ -55,7 +50,6 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 							//Ocurrió un error
 							if (error) error();
 						}else{
-							console.log(docs)
 
 							if (callback) callback(docs);
 						}
@@ -67,7 +61,6 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 							//Ocurrió un error
 							if (error) error();
 						}else{
-							console.log(docs)
 							//Actualizar caché
 							cacheColeccionInfo = docs;
 							db.close();
@@ -112,7 +105,6 @@ Qux.prototype.guardarInfo = function(error, datos, callback) {
 								if (error) error();
 							}else{
 								//Éxito
-								console.log("MongoDB: Colección Actualizada");
 
         						//Resetear caché
         						cacheColeccionInfo=null;
@@ -159,7 +151,6 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 						if (error) error();
 					}else{
 						//Éxito
-						console.log("MongoDB: Colección Actualizada");
 
 						//Resetear caché
 						cacheColeccionFotoS = null;
@@ -203,7 +194,6 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 						if (error) error();
 					}else{
 						//Éxito
-						console.log("MongoDB: Colección Actualizada");
 
 						//Resetear caché
 						cacheColeccionFotoS = null;
@@ -222,8 +212,6 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 }
 
 Qux.prototype.obtenerFotos = function(error, anchoContenedor, callback) {
-
-	console.log(anchoContenedor);
 
 	var filtroTamanio;
 	var cacheColeccionFotoAdecuado;
@@ -253,7 +241,6 @@ Qux.prototype.obtenerFotos = function(error, anchoContenedor, callback) {
 	//Verificar si estan los datos en caché
 	if (cacheColeccionFotoAdecuado){
 
-		console.log("Acierto en caché: Colección de fotos");
 		if (callback) callback(cacheColeccionFotoAdecuado);
 
 	}else{
@@ -275,7 +262,6 @@ Qux.prototype.obtenerFotos = function(error, anchoContenedor, callback) {
 						//Ocurrió un error
 						if (error) error();
 					}else{
-						console.log(docs)
 
 						//Actualizar caché
 						if (anchoContenedor >= 900){
@@ -342,8 +328,6 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 								//Ocurrió un error
 								if (error) error(errF);
 							}else{
-								console.log("OBTENINENDO CANTIDAD DE REGISTROS")
-								console.log(result);
 
 								//Actualizar caché y estructura
 								cacheColeccionCantFotos = result;
@@ -369,7 +353,6 @@ Qux.prototype.obtenerUsuarios = function(error, callback) {
 	//Verificar si estan los datos en caché
 	if (cacheColeccionUsers){
 
-		console.log("Acierto en caché: Colección " + nombreColeccionUsers);
 		if (callback) callback(cacheColeccionUsers);
 
 	}else{
@@ -391,7 +374,6 @@ Qux.prototype.obtenerUsuarios = function(error, callback) {
 						//Ocurrió un error
 						if (error) error();
 					}else{
-						console.log(docs)
 
 						//Actualizar caché
 						cacheColeccionUsers = docs;
@@ -462,7 +444,6 @@ Qux.prototype.guardarSolicitud = function(error, datos, callback) {
 						if (error) error();
 					}else{
 						//Éxito
-						console.log("MongoDB: Colección Actualizada");
 
 						db.close();
 						callback(result);
@@ -509,7 +490,6 @@ Qux.prototype.obtenerSolicitudes = function(error, callback) {
 					//Ocurrió un error
 					if (error) error();
 				}else{
-					console.log(docs)
 
 					db.close();
 
@@ -536,10 +516,6 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 
 			//Obtener y actualizar cada uno de los ids
 
-			console.log("listaIds ######################################################################################");
-			console.log(listaIds);
-
-
 			for (var i=0; i<listaIds.length; i++){
 				collection.findOne({ "_id" : new MongoDb.ObjectID(listaIds[i]) }, function(err, doc) {
 
@@ -547,9 +523,6 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 						//Ocurrió un error
 						console.log("Error al intentar actualizar la solicitud " + listaIds[i]);
 					}else{
-
-						console.log("Registro leido ######################################################################################");
-						console.log(doc);
 
 						//Actualizar valor
 						doc.VistoUsuarios.push(usuario);
@@ -575,9 +548,6 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
 Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback){
 
-	console.log("###Datos obtenidos en el módulo AccesoMongo");
-	console.log(datos);
-
 	//Se conecta a la BD
 	MongoClient.connect(uri, function(err, db) {
 
@@ -591,9 +561,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		    //Actualizar 2 colecciones BD en paralelo
 		    async.parallel([
 		        function(callback) {
-
-	        		console.log("###Datos en primer función paralela");
-					console.log(datos);
 
 					//Verificar si se debe actualizar datos del usuario
 					if (datos && (datos.pass || datos.mail)){
@@ -609,8 +576,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 				                callback("Error al buscar el usuario " + usuario + " en la colección " + nombreColeccionUsers, null);
 
 							}else if(doc){
-								console.log("Registro leido");
-								console.log(doc);
 
 								//Actualizar valores
 								if (datos.pass) doc.Pass = datos.pass;
@@ -626,7 +591,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 						                callback("Error al intentar actualizar los datos de usuario", null);
 									}else{
 										//Actualizado con éxito
-										console.log("Registro actualizado con éxito");
+
 										cacheColeccionUsers=null;
 										//No hay datos para actualizar en esta colección, indicar éxito
 						                callback(null, "Registro actualizado con éxito");
@@ -647,9 +612,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		        },
 		        function(callback) {
 
-	        		console.log("###Datos en segunda función paralela");
-					console.log(datos);
-
 					//Verificar si se debe actualizar datos para el mail
 					if (datos && datos.mailDestino){
 						//Referenciar a la colección
@@ -663,8 +625,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 								//Indicar error
 				                callback("Error al buscar los datos para NodeMailer en la colección " + nombreColeccionDatosMail, null);
 							}else if(doc){
-								console.log("Registro leido");
-								console.log(doc);
 
 								//Actualizar valorres
 								doc.MailDestino = datos.mailDestino;
@@ -679,7 +639,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 						                callback("Error al intentar actualizar los datos de NodeMailer", null);
 									}else{
 										//Actualizado con éxito
-										console.log("Registro actualizado con éxito");
+
 										//No hay datos para actualizar en esta colección, indicar éxito
 						                callback(null, "Registro actualizado con éxito");
 									}
@@ -694,8 +654,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 						});
 					}else{
 						//No hay datos para actualizar en esta colección, indicar éxito
-						console.log("No se envió a actualizar el mail de destino");
-						console.log(datos);
+
 		                callback(null, "Sin datos");
 					}
 
@@ -712,7 +671,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		      }
 		      else{
 		        //Éxito
-		        console.log("Funciones en paralelo para actualizar datos de usuario realizado con éxito");
 
 		        if (callback) callback(results);
 		      }

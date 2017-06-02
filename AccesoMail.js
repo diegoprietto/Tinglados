@@ -28,7 +28,7 @@ Qux.prototype.enviarMail = function (error, datos, callback){
 
 		//Verificar cantidad enviada
 		if (ControlFraude.Contador > 100){
-			console.log("Se han recibido demasiados mails en poco tiempo, los próximos consultar en el sitio");
+			console.log("Warning: Se han recibido demasiados mails en poco tiempo, los próximos consultar en el sitio");
 			if (callback) callback();
 			return;	//No enviar mail
 		}
@@ -71,7 +71,6 @@ Qux.prototype.enviarMail = function (error, datos, callback){
 	        console.log(err);
 	        if (error) error();
 	    } else {
-	        console.log("Email sent");
 	        if (callback) callback();
 	    }
 	});

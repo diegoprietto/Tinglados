@@ -42,7 +42,6 @@ Qux.prototype.obtenerCategorias = function (error, dataBase64, callback){
 				    }else{
 
 				    	//Retornar imagen reajustada en Base64
-						console.log("Reajustada con éxito");
 		     			if (callback) callback(null, result);
 					}
 
@@ -81,7 +80,6 @@ Qux.prototype.obtenerCategorias = function (error, dataBase64, callback){
 		}
 		else{
 			//Éxito
-			console.log("Funciones en paralelo para procesamiento de imagen completada con éxito");
 			if (callback) callback(results);
 		}
 	});

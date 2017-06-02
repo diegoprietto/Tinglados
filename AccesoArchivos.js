@@ -5,10 +5,6 @@ var nombreArchivo = 'data.txt';
 
 var Qux = function () {};
 
-Qux.prototype.log = function () {
-	console.log('Modulo AccesoArchivo.js');
-};
-
 //Guarda en archivo plano
 /*
 	error: Función callback que se ejecuta cuando ocurre un error
