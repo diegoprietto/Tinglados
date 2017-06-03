@@ -24,3 +24,9 @@
  .tituloSolicitud{
  	font-weight: bold;
  }
+
+/* Evitar que se extienda mas del 100% del body y aparezca el scroll */
+ .row{
+ 	margin-right: 0px;
+ 	margin-top: 0px;
+ }

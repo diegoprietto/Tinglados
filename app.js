@@ -280,7 +280,7 @@ app.post('/login', function(req, res){
     var datos = req.body.content;
 
     if(!datos || !datos.id || !datos.pass){
-        console.log("No se recibieron las credenciales");
+        console.log("Login: No se recibieron las credenciales");
         //Enviar un flag de error de autenticación
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'INCOMPLETE'}));

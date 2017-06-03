@@ -4,6 +4,7 @@
 	border: 1px solid #ddecf2;
 	padding-right: 15px;
 	padding-left: 15px;
+	overflow-x: hidden;
 }
 
 .textoSupIzquierdo {
@@ -142,4 +143,21 @@
 
 #iconoManzana:hover{
 	color: red;
+}
+
+body{
+   overflow-x: hidden;
+}
+
+.fa-question-circle:hover, .fa-phone-square:hover{
+	color: #b6e4e4;
+}
+
+/* Tamaño XS y SM */
+@media (max-width: 767px) { 
+
+	.fa-question-circle{
+		margin-left: 10px;
+	}
+
 }

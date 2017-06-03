@@ -129,7 +129,7 @@ html
 								.col-sm-4
 									input#area_code.form-control(size='3', maxlength='5', placeholder='Cód.', name='area_code', type='text')
 								.col-sm-1.infoCodigoArea
-									i.fa.fa-question-circle(aria-hidden="true")
+									i.fa.fa-question-circle(aria-hidden="true", data-toggle="tooltip", data-placement="top", title="Ejemplo código de área de Buenos Aires: 11")
 								.col-sm-7
 									input#phone_number.form-control(maxlength='50', placeholder='Teléfono', name='phone_number', type='text')
 							.form-group
@@ -172,5 +172,4 @@ html
 							|Click aquí para llamar
 							
 		.franjaExtra
-			.row
-				span#iconoManzana.glyphicon.glyphicon-apple.pull-right(aria-hidden='true', onclick="ManzanableInfinite();", onDblClick="ManzanableInfiniteX2();")
+			span#iconoManzana.glyphicon.glyphicon-apple.pull-right(aria-hidden='true', onclick="ManzanableInfinite();", onDblClick="ManzanableInfiniteX2();")

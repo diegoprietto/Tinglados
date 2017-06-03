@@ -5,6 +5,9 @@ $(document).ready(function () {
 	$(".botonLlamar").on( "click", llamarTel );
 	//Solicitar fotos del server para el carrousel
 	CargaInicialFotos();
+
+	//Inicializar tooltips
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 $(window).resize(function () {
