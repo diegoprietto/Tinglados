@@ -62,7 +62,7 @@
 	padding: 15px 15px 15px 15px;
 	font-weight: bold;
 	color: white;
-	font-size: 25px
+	font-size: 25px;
 }
 
 .franjaInferior{
@@ -158,6 +158,15 @@ body{
 
 	.fa-question-circle{
 		margin-left: 10px;
+	}
+
+
+}
+
+@media (max-width: 991px) { 
+
+	#carrusel{
+		margin-bottom: 15px
 	}
 
 }

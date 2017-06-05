@@ -15,14 +15,25 @@ $(window).resize(function () {
 });
 
 function actualizarAltoCarrusel(){
-	var altoTitulo = $(".tituloFormulario").height() + parseInt($(".tituloFormulario").css("padding-top").replace("px","")) + parseInt($(".tituloFormulario").css("padding-bottom").replace("px",""));
-	var altoCuerpo = $(".cuerpoFormulario").height() + parseInt($(".cuerpoFormulario").css("padding-top").replace("px","")) + parseInt($(".cuerpoFormulario").css("padding-bottom").replace("px",""));
+	if ($(window).width() <= 975){
+		var anchoContenedor = $("#carrusel").width();
+		var altoContenedor = (17/26)*anchoContenedor;
 
-	var altoTotal = altoTitulo + altoCuerpo;
-	var anchoTotal = (26/17)*altoTotal;
-	$("#carrusel").css("height",altoTotal + "px");
-	$(".carousel-inner img").css("height", altoTotal + "px");
-	$(".carousel-inner img").css("width", anchoTotal + "px");
+		$("#carrusel").css("height",altoContenedor + "px");
+		$(".carousel-inner img").css("height", altoContenedor + "px");
+		$(".carousel-inner img").css("width", anchoContenedor + "px");
+
+	}else{
+
+		var altoTitulo = $(".tituloFormulario").height() + parseInt($(".tituloFormulario").css("padding-top").replace("px","")) + parseInt($(".tituloFormulario").css("padding-bottom").replace("px",""));
+		var altoCuerpo = $(".cuerpoFormulario").height() + parseInt($(".cuerpoFormulario").css("padding-top").replace("px","")) + parseInt($(".cuerpoFormulario").css("padding-bottom").replace("px",""));
+
+		var altoTotal = altoTitulo + altoCuerpo;
+		var anchoTotal = (26/17)*altoTotal;
+		$("#carrusel").css("height",altoTotal + "px");
+		$(".carousel-inner img").css("height", altoTotal + "px");
+		$(".carousel-inner img").css("width", anchoTotal + "px");
+	}
 }
 
 function llamarTel(){

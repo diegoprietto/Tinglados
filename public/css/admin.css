@@ -28,5 +28,9 @@
 /* Evitar que se extienda mas del 100% del body y aparezca el scroll */
  .row{
  	margin-right: 0px;
- 	margin-top: 0px;
+ 	margin-left: 0px;
+ }
+
+ #AlertErrorModal, #AlertExitoModal{
+ 	margin-top: 15px;
  }
