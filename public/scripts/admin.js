@@ -257,7 +257,11 @@ function GuardarFotoOk(response, elemento){
 		elemento.attr("idFoto", idFoto);
 	}else
 	{
-		alert(alert("Se produjo un error inesperado en el sitio, intente recargar la página para trabajar normalmente, si este mensaje persiste contacte al administrador del sitio para su corrección."))
+		alert("Se produjo un error inesperado en el sitio, intente recargar la página para trabajar normalmente, si este mensaje persiste contacte al administrador del sitio para su corrección.");
+		//Mostrar el botón de error
+		elemento.find('.FotoEliminar').hide();
+		elemento.find('.FotoSpin').hide();
+		elemento.find('.FotoCargar').show();
 	}
 }
 
@@ -281,7 +285,7 @@ function BorrarFotoError(response, elemento){
 	elemento.find('.FotoSpin').hide();
 	elemento.find('.FotoCargar').hide();
 
-	alert("Se produjo un error inesperado, intente recargar la página, si el error persiste contacte al administrador del sitio para su corrección.")
+	alert("Se produjo un error inesperado, intente recargar la página, si el error persiste contacte al administrador del sitio para su corrección.");
 }
 
 //Carga las fotos mediante AJAX una vez iniciada la página para que el usuario no tenga que esperar
@@ -487,8 +491,6 @@ function ObtenerDatosUsuarioError(){
 //Evento click del botón guardar de la vista Usuario
 function UsuarioGuardar(){
 	var estructuraDatos = new Object();
-
-	debugger;
 
 	if ($("#usuarioMailButton").attr('disabled') === 'disabled')
 		estructuraDatos.mail = $("#usuarioMail").val();
