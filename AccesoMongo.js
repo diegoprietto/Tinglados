@@ -556,8 +556,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 			//Ocurrió un error
 			if (error) error(err);
 		}else{
-		  	//Referenciar a la colección
-			var collection;
 
 		    //Actualizar 2 colecciones BD en paralelo
 		    async.parallel([
@@ -566,7 +564,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 					//Verificar si se debe actualizar datos del usuario
 					if (datos && (datos.pass || datos.mail)){
 						//Referenciar a la colección
-						collection = db.collection(nombreColeccionUsers);
+						var collection = db.collection(nombreColeccionUsers);
 
 						collection.findOne({ "Id" : usuario }, function(err, doc) {
 
@@ -616,7 +614,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 					//Verificar si se debe actualizar datos para el mail
 					if (datos && datos.mailDestino){
 						//Referenciar a la colección
-						collection = db.collection(nombreColeccionDatosMail);
+						var collection = db.collection(nombreColeccionDatosMail);
 
 						collection.findOne({}, function(err, doc) {
 
