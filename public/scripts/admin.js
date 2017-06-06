@@ -30,6 +30,9 @@ $(document).ready(function () {
 
 	//Asignar evento al control de carga de imagenes para procesar los archivos seleccionados
 	document.getElementById('files').addEventListener('change', CargarFoto, false);
+
+	//Inicializar tooltips
+	$('[data-toggle="tooltip"]').tooltip();
 });
 
 function AgregarInfo(){
