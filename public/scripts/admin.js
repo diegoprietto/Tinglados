@@ -178,13 +178,13 @@ function CargarFoto(evt) {
          reader.onload = (function(theFile) {
              return function(e) {
              	// Creamos la imagen (idFoto es el ID con el que se guarda en la BD, inicialmente esta vacío hasta que se guarde correctamente)
-             	$("#list").append(['<div class="CampoFoto" idFoto="">\
+             	$("#list").append(['<div class="CampoFoto col-lg-4 col-md-4 col-sm-6 col-xs-12" idFoto="">\
              		<div style="margin-top: 15px">\
              			<span class="FotoEliminar" style="color: red; display: none;"><i class="fa fa-trash" onclick="EliminarFoto(this);"></i></span>\
 						<span class="FotoSpin" style="color: black; display: none;"><i class="fa fa-spinner fa-spin"></i>Cargando al servidor...</span>\
 						<span class="FotoCargar" style="color: red; cursor: pointer; display: block;" onclick="SubirFoto(this);"><i class="fa fa-upload"></i>Error, clic para volver a intentar...</span>\
              		</div>\
-             		<img class="miniaturaFoto" src="', e.target.result,'" title="', escape(theFile.name), '"/> </div>'].join(''));
+             		<img class="miniaturaFoto" height="196px" width="300px" src="', e.target.result,'" title="', escape(theFile.name), '"/> </div>'].join(''));
 
              	//Cargamos en el server la nueva imagen
              	SubirFotoIdFoto( $('#list div[idFoto=""]:last-child') );
@@ -306,7 +306,7 @@ function ObtenerFotosOk(response){
 
 		$.each(response.Datos, function(index, value){
 
-		 	$("#list").append(['<div class="CampoFoto" idFoto="', value._id, '">\
+		 	$("#list").append(['<div class="CampoFoto col-lg-4 col-md-4 col-sm-6 col-xs-12" idFoto="', value._id, '">\
 		 		<div style="margin-top: 15px">\
 		 			<span class="FotoEliminar" style="color: red; display: block;"><i class="fa fa-trash" onclick="EliminarFoto(this);"></i></span>\
 					<span class="FotoSpin" style="color: black; display: none;"><i class="fa fa-spinner fa-spin"></i>Cargando al servidor...</span>\

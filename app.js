@@ -44,6 +44,12 @@ app.set('view engine', 'pug');
 
 //Ajax: Telefono
 app.get('/getTel', function(req, res){
+
+  //Contar la solicitud
+  setTimeout(function(){ 
+    ContadorVisitas("GT", req);
+  }, 1000);
+
 	res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify({ t1: '11-', t2: '6468-6615' }));
 });
@@ -210,6 +216,11 @@ app.post('/Contacto', function(req, res){
               },
               datos,
               function (result) {
+
+                //Contar la solicitud
+                setTimeout(function(){ 
+                  ContadorVisitas("M", req, datos.nombre);
+                }, 1000);
 
                 //Indicar Éxito
                 callback(null, result);
@@ -436,6 +447,11 @@ app.get('/', function(req, res){
   var sesionCerrada = false;
   var cargarDatosBD = true;
 
+  //Contar visita
+  setTimeout(function(){ 
+    ContadorVisitas("H", req);
+  }, 1000);
+
   //Verificar parámetros
   if (req.query.action && req.query.action === "logout" && req.session){
     //Cerrar sesión
@@ -508,6 +524,12 @@ app.get('/login', function(req, res){
 
 //Cualquier url que no existente, redirigir a Home
 app.all('/*', function (req, res) {
+
+  //Contar la solicitud
+  setTimeout(function(){ 
+    ContadorVisitas("P", req, req.originalUrl);
+  }, 1000);
+
    console.log("Acceso a url inexistente: " + req.originalUrl);
 
    res.redirect('/');
@@ -611,7 +633,33 @@ function MarcarComoVistos(registros, usuario){
       //Éxito
     }
   );
-
 }
+
+//Almacena un registro de la visita realizada, útil como contador de visitas y estadisticas del sitio
+function ContadorVisitas(accion, req, descripcionOpcional){
+
+  var estructuraDatos = {
+    Fecha: new Date(),
+    Accion: accion,
+    Descripcion: descripcionOpcional ? descripcionOpcional : "",
+    Usuario: (req && req.session.user && req.session.user.Id) ? req.session.user.Id : ""
+  };
+
+  //Actualizar la BD
+  accesoMongo.InsertarVisita(
+    function () {
+      console.log("Error al intentar insertar un contador de visitas.");
+    },
+    estructuraDatos,
+    function () {
+      //Éxito
+    }
+  );
+}
+
+//Contar Inicio del server
+setTimeout(function(){ 
+  ContadorVisitas("I");
+}, 1000);
 
 //FIN Funciones iniciales**************************************************************************************

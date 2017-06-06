@@ -10,6 +10,7 @@ var nombreColeccionFoto = "Foto";
 var nombreColeccionUsers = "Users";
 var nombreColeccionSolicitudes = "Solicitudes";
 var nombreColeccionDatosMail = "Mail";
+var nombreColeccionVisitas = "Visitas";
 
 //Memorias cachés para recursos
 var cacheColeccionInfo=null;
@@ -679,6 +680,40 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 		}
 	});
 
+}
+
+//Almacenamiento de visita de usuario
+Qux.prototype.InsertarVisita = function(error, registro, callback) {
+
+	//Conectarse a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccionVisitas);
+
+			//Insertar documento
+			collection.insertMany(
+				[registro],
+				function(err, result) {
+
+					if (err){
+						//Ocurrió un error
+						if (error) error(err);
+					}else{
+						//Éxito
+
+						db.close();
+						if (callback) callback(result);
+					}
+			});
+
+		}
+	});
 }
 
 exports.Qux = Qux;
