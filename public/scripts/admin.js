@@ -19,7 +19,8 @@ var estructuraDocumento = '	<li class="media Documento">\
 var VistasCargadas = {
 	fotos: false,
 	solicitudes: false,
-	usuario: false
+	usuario: false,
+	exportBd: false
 }
 
 $(document).ready(function () {
@@ -124,6 +125,7 @@ function VisionInfo(){
 	$("#ContenedorInfo").show();
 	$("#ContenedorSolicitudes").hide();
 	$("#ContenedorUsuario").hide();
+	$("#ContenedorExportBd").hide();
 }
 
 function VisionFotos(){
@@ -131,6 +133,7 @@ function VisionFotos(){
 	$("#ContenedorInfo").hide();
 	$("#ContenedorSolicitudes").hide();
 	$("#ContenedorUsuario").hide();
+	$("#ContenedorExportBd").hide();
 
 	//Cargar fotos dinámicamente
 	if (!VistasCargadas.fotos){
@@ -144,6 +147,7 @@ function VisionSolicitudes(){
 	$("#ContenedorInfo").hide();
 	$("#ContenedorSolicitudes").show();
 	$("#ContenedorUsuario").hide();
+	$("#ContenedorExportBd").hide();
 
 	//Carga de solicitudes
 	if (!VistasCargadas.solicitudes){
@@ -157,12 +161,21 @@ function VisionUsuario(){
 	$("#ContenedorInfo").hide();
 	$("#ContenedorSolicitudes").hide();
 	$("#ContenedorUsuario").show();
+	$("#ContenedorExportBd").hide();
 
 	//Carga de datos
 	if (!VistasCargadas.usuario){
 		VistasCargadas.usuario = true;
 		ObtenerDatosUsuario();
 	}
+}
+
+function VisionExportBd(){
+	$("#ContenedorFotos").hide();
+	$("#ContenedorInfo").hide();
+	$("#ContenedorSolicitudes").hide();
+	$("#ContenedorUsuario").hide();
+	$("#ContenedorExportBd").show();
 }
 
 function CargarFoto(evt) {
@@ -643,4 +656,74 @@ function ConfirmChangePwError(result){
 	$("#ConfirmChangePwButton").removeAttr("disabled");
 	$("#ConfirmChangePwButton .fa-floppy-o").show();
 	$("#ConfirmChangePwButton .fa-spinner").hide();
+}
+
+function RecDatos(id, elemento){
+	alert("Función no habilitada por seguridad.")
+}
+
+function genDatos(id, elemento){
+	//Mostrar spinner y deshabilitar el botón
+	var boton = $(elemento).closest('button');
+	boton.attr("disabled", "disabled");
+	boton.find(".fa-cogs").hide();
+	boton.find(".fa-spinner").show();
+
+	$.ajax({
+		contentType: "application/json",
+		method: "POST",
+		url: "GenerarDatos",
+		data: JSON.stringify({ content: id }),
+		success: function(response) { genDatosOk(response, elemento); },
+		error: function(response) { genDatosError(response, elemento); }
+	});
+}
+
+function genDatosOk(resultado, elemento){
+
+	descargarArchivo(generarTexto(resultado), 'archivo.txt');
+
+	//Ocultar spinner
+	var boton = $(elemento).closest('button');
+	boton.removeAttr("disabled");
+	boton.find(".fa-cogs").show();
+	boton.find(".fa-spinner").hide();
+}
+
+//Genera un objeto Blob con los datos en un archivo TXT
+function generarTexto(datos) {
+    var texto = JSON.stringify(datos);
+
+    return new Blob([texto], {
+        type: 'text/plain'
+    });
+};
+
+function descargarArchivo(contenidoEnBlob, nombreArchivo) {
+    var reader = new FileReader();
+    reader.onload = function (event) {
+        var save = document.createElement('a');
+        save.href = event.target.result;
+        save.target = '_blank';
+        save.download = nombreArchivo || 'archivo.dat';
+        var clicEvent = new MouseEvent('click', {
+            'view': window,
+                'bubbles': true,
+                'cancelable': true
+        });
+        save.dispatchEvent(clicEvent);
+        (window.URL || window.webkitURL).revokeObjectURL(save.href);
+    };
+    
+    reader.readAsDataURL(contenidoEnBlob);
+};
+
+function genDatosError(resultado, elemento){
+	//Ocultar spinner y habilitar el botón
+	alert("Se produjo un error, vuelva a reintentar.");
+
+	var boton = $(elemento).closest('button');
+	boton.removeAttr("disabled");
+	boton.find(".fa-cogs").show();
+	boton.find(".fa-spinner").hide();
 }

@@ -137,3 +137,57 @@ block VistaCuerpo
 					// /.modal-content
 				// /.modal-dialog
 			// /.modal
+
+	#ContenedorExportBd.row(style="padding-left: 15px; display: none")
+		h3 Generar Datos:
+		button.btn.btn-primary(type='button', onclick='genDatos("I", this);')
+			|Generar datos de información
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-primary(type='button', onclick='genDatos("F", this);')
+			|Generar datos de fotos
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-primary(type='button', onclick='genDatos("U", this);')
+			|Generar datos de usuarios
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-primary(type='button', onclick='genDatos("M", this);')
+			|Generar datos de mailer
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-primary(type='button', onclick='genDatos("S", this);')
+			|Generar datos de solicitudes
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-primary(type='button', onclick='genDatos("V", this);')
+			|Generar datos de visitas
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+
+		br
+		h3 Recuperar Datos:
+		button.btn.btn-warning(type='button', onclick='RecDatos("I", this);')
+			|Recuperar datos de información
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-warning(type='button', onclick='RecDatos("F", this);')
+			|Recuperar datos de fotos
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-warning(type='button', onclick='RecDatos("U", this);')
+			|Recuperar datos de usuarios
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-warning(type='button', onclick='RecDatos("M", this);')
+			|Recuperar datos de mailer
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-warning(type='button', onclick='RecDatos("S", this);')
+			|Recuperar datos de solicitudes
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")
+		button.btn.btn-warning(type='button', onclick='RecDatos("V", this);')
+			|Recuperar datos de visitas
+			span.fa.fa-cogs(style="margin-left: 5px")
+			span.fa.fa-spinner.fa-spin(style="margin-left: 5px; display: none;")

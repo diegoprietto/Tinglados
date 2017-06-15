@@ -714,4 +714,66 @@ Qux.prototype.InsertarVisita = function(error, registro, callback) {
 	});
 }
 
+
+//Devuelve la colección completa indicada, con el fin de generar una exportación de todos los datos
+Qux.prototype.generarDatosExportacion = function (error, idColeccion, callback) {
+
+	//Verificar la colección
+	var nombreColeccion = null;
+
+	switch(idColeccion){
+		case "I":
+			nombreColeccion = nombreColeccionInfo;
+			break;
+		case "F":
+			nombreColeccion = nombreColeccionFoto;
+			break;
+		case "U":
+			nombreColeccion = nombreColeccionUsers;
+			break;
+		case "M":
+			nombreColeccion = nombreColeccionDatosMail;
+			break;
+		case "S":
+			nombreColeccion = nombreColeccionSolicitudes;
+			break;
+		case "V":
+			nombreColeccion = nombreColeccionVisitas;
+			break;
+		default:
+			//Entrada no válida
+			console.log("generarDatosExportacion: Entrada no válida '" + idColeccion + "'");
+			if (error) error("Entrada no válida");
+
+			return;
+	}
+
+	//Se conecta a la BD y obtiene los datos
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccion);
+
+			//Traer todos los datos
+			collection.find({}).toArray(function(err, docs) {
+
+				if (err){
+					//Ocurrió un error
+					if (error) error(err);
+				}else{
+
+					if (callback) callback(docs);
+				}
+			});
+
+		}
+	});
+
+
+}
+
 exports.Qux = Qux;

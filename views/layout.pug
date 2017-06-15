@@ -71,6 +71,15 @@ html
 									a(href='/login')
 										|Inciar Sesión
 										span.fa.fa-user(style="margin-left: 5px")
+							if (user && user.Id && user.Rol && user.Rol === "X")
+								li.dropdown
+									a.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+										|Avanzado
+										span.fa.fa-cogs(style="margin-left: 5px")
+										span.caret
+									ul.dropdown-menu
+										li(onclick='if (VisionExportBd) VisionExportBd();')
+											a(href='#') Export DB
 							li
 								a(href='/')
 									|Ir a Home

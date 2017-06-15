@@ -436,6 +436,38 @@ app.post('/GuardarUsuario', function(req, res){
   }
 });
 
+
+app.post('/GenerarDatos', function(req, res){
+
+    var dato = req.body.content;
+
+    if(!dato){
+        console.log("GenerarDatos: No se recibieron datos");
+        //Enviar un flag de error
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ Resultado: 'NODATA'}));
+    }
+    else{
+
+      accesoMongo.generarDatosExportacion(
+        function () {
+          console.log("Error al generar datos de exportación");
+
+          //Enviar un flag de Error
+          res.setHeader('Content-Type', 'application/json');
+          res.send(JSON.stringify({ Resultado: 'ERROR'}));
+        },
+        dato,
+        function (result) {
+
+          //Entregar como archivo de texto
+          res.setHeader('Content-Type', 'application/json');
+          res.send(JSON.stringify(result));
+        }
+      );
+    }
+});
+
 //FIN Funciones AJAX**************************************************************************************
 
 
@@ -642,7 +674,7 @@ function ContadorVisitas(accion, req, descripcionOpcional){
     Fecha: new Date(),
     Accion: accion,
     Descripcion: descripcionOpcional ? descripcionOpcional : "",
-    Usuario: (req && req.session.user && req.session.user.Id) ? req.session.user.Id : ""
+    Usuario: (req && req.session && req.session.user && req.session.user.Id) ? req.session.user.Id : ""
   };
 
   //Actualizar la BD
