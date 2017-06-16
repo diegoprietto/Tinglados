@@ -54,7 +54,7 @@ app.get('/getTel', function(req, res){
     res.send(JSON.stringify({ t1: '11-', t2: '6468-6615' }));
 });
 
-app.post('/GuardarInfo', function(req, res){
+app.post('/GuardarInfo', checkAdminRoleAjax, function(req, res){
 
   var datos = req.body.content;
 
@@ -87,7 +87,7 @@ app.post('/GuardarInfo', function(req, res){
   }
 });
 
-app.post('/GuardarFoto', function(req, res){
+app.post('/GuardarFoto', checkAdminRoleAjax, function(req, res){
 
   var datos = req.body.content;
 
@@ -142,7 +142,7 @@ app.post('/GuardarFoto', function(req, res){
   }
 });
 
-app.post('/BorrarFoto', function(req, res){
+app.post('/BorrarFoto', checkAdminRoleAjax, function(req, res){
 
   var idFoto = req.body.content;
 
@@ -336,7 +336,7 @@ app.post('/login', function(req, res){
 
 
 //Solicitud de registros de usuarios que se contactaron por el formulario de Home
-app.get('/ObtenerSolicitudes', function(req, res){
+app.get('/ObtenerSolicitudes', checkAdminRoleAjax, function(req, res){
 
   accesoMongo.obtenerSolicitudes(
     function () {
@@ -367,7 +367,7 @@ app.get('/ObtenerSolicitudes', function(req, res){
 
 
 //Solicitud de datos para la vista usuario
-app.get('/ObtenerDatosVistaUsuario', function(req, res){
+app.get('/ObtenerDatosVistaUsuario', checkAdminRoleAjax, function(req, res){
 
   //Armar respuesta
   var estructuraDatos = {
@@ -382,7 +382,7 @@ app.get('/ObtenerDatosVistaUsuario', function(req, res){
 
 
 //Actualizar datos de usuario y mail de destino de solicitudes
-app.post('/GuardarUsuario', function(req, res){
+app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
 
   var datos = req.body.content;
 
@@ -437,7 +437,7 @@ app.post('/GuardarUsuario', function(req, res){
 });
 
 
-app.post('/GenerarDatos', function(req, res){
+app.post('/GenerarDatos', checkDevRoleAjax, function(req, res){
 
     var dato = req.body.content;
 
@@ -531,17 +531,6 @@ app.get('/', function(req, res){
 
 });
 
-//Determina a partir de los datos de sesión si se tiene permiso de administrador del sitio
-function esAdmin(req, sesionCerrada){
-  if (sesionCerrada){
-    return true;
-  }else if(req && req.session && req.session.user){
-    return true;
-  }else{
-    return false;
-  }
-}
-
 //Administración del sitio
 app.get('/admin', checkSignIn, function(req, res){
   accesoMongo.obtenerInfo(null, false, true, function(data){
@@ -583,6 +572,30 @@ function checkSignIn(req, res, next){
     }
 }
 
+function checkAdminRoleAjax(req, res, next){
+    if(req.session.user && req.session.user.Rol && (req.session.user.Rol==="A" || req.session.user.Rol==="X")){
+
+      next();
+    } else {
+
+      //Usuario no autorizado
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'ERRORAUTH', Info: "El usuario no esta autorizado."}));
+    }
+}
+
+function checkDevRoleAjax(req, res, next){
+    if(req.session.user && req.session.user.Rol && req.session.user.Rol==="X"){
+
+      next();
+    } else {
+
+      //Usuario no autorizado
+      res.setHeader('Content-Type', 'application/json');
+      res.send(JSON.stringify({ Resultado: 'ERRORAUTH', Info: "El usuario no esta autorizado."}));
+    }
+}
+
 //FIN Control Atenticación**************************************************************************************
 
 
@@ -607,6 +620,16 @@ var server = app.listen(app.get('port'), function () {
 var nombreColeccionDatosMail = "Mail";
 var datosMail = null;
 
+//Determina a partir de los datos de sesión si se tiene permiso de administrador del sitio
+function esAdmin(req, sesionCerrada){
+  if (sesionCerrada){
+    return true;
+  }else if(req && req.session && req.session.user){
+    return true;
+  }else{
+    return false;
+  }
+}
 
 //Obtener datos para el envío de correos
 function obtenerDatosMail(){
