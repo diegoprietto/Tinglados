@@ -22,6 +22,12 @@ var accesoMail = new AccesoMail();
 var AccesoJimp = require('./AccesoJimp.js').Qux;
 var accesoJimp = new AccesoJimp();
 
+var ModuloEncriptar = require('./ModuloEncriptar.js').Qux;
+var moduloEncriptar = new ModuloEncriptar();
+
+var ModuloHash = require('./ModuloHash.js').Qux;
+var moduloHash = new ModuloHash();
+
 var async = require("async");
 
 //Guardar datos en sesiones
@@ -206,6 +212,14 @@ app.post('/Contacto', function(req, res){
         },
         function(callback) {
 
+          //Encriptar datos sensibles
+          var clonDatos = clonarObjetoJs(datos);
+
+          if (clonDatos.nombre) clonDatos.nombre = moduloEncriptar.encrypt(clonDatos.nombre);
+          if (clonDatos.apellido) clonDatos.apellido = moduloEncriptar.encrypt(clonDatos.apellido);
+          if (clonDatos.mail) clonDatos.mail = moduloEncriptar.encrypt(clonDatos.mail);
+          if (clonDatos.telNro) clonDatos.telNro = moduloEncriptar.encrypt(clonDatos.telNro);
+
           //Proceso de actualización en BD
           accesoMongo.guardarSolicitud(
               function () {
@@ -214,7 +228,7 @@ app.post('/Contacto', function(req, res){
                 //Indicar error
                 callback("Error al intentar almacenar en BD", null);
               },
-              datos,
+              clonDatos,
               function (result) {
 
                 //Contar la solicitud
@@ -305,7 +319,7 @@ app.post('/login', function(req, res){
           //Enviar un flag de Error
           res.setHeader('Content-Type', 'application/json');
           res.send(JSON.stringify({ Resultado: 'ERROR'}));
-        },
+        },moduloEncriptar.decrypt,
         function (result) {
 
           var encontrado = false;
@@ -345,7 +359,7 @@ app.get('/ObtenerSolicitudes', checkAdminRoleAjax, function(req, res){
       //Enviar un flag de Error
       res.setHeader('Content-Type', 'application/json');
       res.send(JSON.stringify({ Resultado: 'ERROR'}));
-    },
+    },moduloEncriptar.decrypt,
     function (result) {
 
       //Analizar los registros vistos y los que no
@@ -399,7 +413,13 @@ app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
       }
     }
 
-    //Almacenar la colección de fotos
+    //Encriptar datos sensibles
+    var clonDatos = clonarObjetoJs(datos);
+
+    if (clonDatos.mail) clonDatos.mail = moduloEncriptar.encrypt(clonDatos.mail);
+    if (clonDatos.mailDestino) clonDatos.mailDestino = moduloEncriptar.encrypt(clonDatos.mailDestino);
+
+    //Almacenar en la BD
     accesoMongo.ActualizarDatosUsuario(
       function () {
         console.log("Error al intentar actualizar las colecciones.");
@@ -408,8 +428,8 @@ app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'ERROR'}));
       },
-      req.session.user.Id,
-      datos,
+      moduloEncriptar.encrypt(req.session.user.Id),
+      clonDatos,
       function (result) {
         //Actualizar datos localmente
         if (datos.pass) req.session.user.Pass = datos.pass;
@@ -638,6 +658,7 @@ function obtenerDatosMail(){
       console.log("Error al intentar obtener la colección Foto");
     },
     nombreColeccionDatosMail,
+    moduloEncriptar.decrypt,
     function (result) {
 
       datosMail = result;
@@ -710,6 +731,11 @@ function ContadorVisitas(accion, req, descripcionOpcional){
       //Éxito
     }
   );
+}
+
+//clonar objetos con jQuery
+function clonarObjetoJs (obj) {
+    return JSON.parse(JSON.stringify(obj));
 }
 
 //Contar Inicio del server

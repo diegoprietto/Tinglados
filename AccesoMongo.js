@@ -349,7 +349,7 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 	}
 }
 
-Qux.prototype.obtenerUsuarios = function(error, callback) {
+Qux.prototype.obtenerUsuarios = function(error, fnDesencriptar,callback) {
 
 	//Verificar si estan los datos en caché
 	if (cacheColeccionUsers){
@@ -376,6 +376,12 @@ Qux.prototype.obtenerUsuarios = function(error, callback) {
 						if (error) error();
 					}else{
 
+						//Desencriptar datos sensibles
+						for (var i=0; i < docs.length; i++){
+							if (docs[i].Id = fnDesencriptar(docs[i].Id));
+							if (docs[i].Mail = fnDesencriptar(docs[i].Mail));
+						}
+
 						//Actualizar caché
 						cacheColeccionUsers = docs;
 						db.close();
@@ -390,7 +396,7 @@ Qux.prototype.obtenerUsuarios = function(error, callback) {
 }
 
 //Llamada genérica para obtener el primer dato de una colección a indicar
-Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, callback) {
+Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, fnDesencriptar, callback) {
 
 	//Se conecta a la BD y obtiene los datos
 	MongoClient.connect(uri, function(err, db) {
@@ -409,8 +415,14 @@ Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, callback) {
 					//Ocurrió un error
 					if (error) error();
 				}else{
+
 					//Cerrar conexión
 					db.close();
+
+					//Desencriptar datos sensibles
+					if (docs.Id) docs.Id = fnDesencriptar(docs.Id);
+					if (docs.Pass) docs.Pass = fnDesencriptar(docs.Pass);
+					if (docs.MailDestino) docs.MailDestino = fnDesencriptar(docs.MailDestino);
 
 					if (callback) callback(docs);
 				}
@@ -472,7 +484,7 @@ function convertDatosToSolicitudes(datosEntrada){
 }
 
 //Obtener registros de Solicitudes de Presupuesto
-Qux.prototype.obtenerSolicitudes = function(error, callback) {
+Qux.prototype.obtenerSolicitudes = function(error, fnDesencriptar, callback) {
 
 	//Se conecta a la BD y obtiene los datos
 	MongoClient.connect(uri, function(err, db) {
@@ -491,6 +503,14 @@ Qux.prototype.obtenerSolicitudes = function(error, callback) {
 					//Ocurrió un error
 					if (error) error();
 				}else{
+
+					//Desencriptar datos sensibles
+					for (var i=0; i < docs.length; i++){
+			          if (docs[i].Nombre) docs[i].Nombre = fnDesencriptar(docs[i].Nombre);
+			          if (docs[i].Apellido) docs[i].Apellido = fnDesencriptar(docs[i].Apellido);
+			          if (docs[i].Mail) docs[i].Mail = fnDesencriptar(docs[i].Mail);
+			          if (docs[i].TelNro) docs[i].TelNro = fnDesencriptar(docs[i].TelNro);
+					}
 
 					db.close();
 
@@ -625,7 +645,7 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 				                callback("Error al buscar los datos para NodeMailer en la colección " + nombreColeccionDatosMail, null);
 							}else if(doc){
 
-								//Actualizar valorres
+								//Actualizar valores
 								doc.MailDestino = datos.mailDestino;
 
 								//Guardar en la BD actualizado
