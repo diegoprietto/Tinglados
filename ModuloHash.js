@@ -26,4 +26,14 @@ Qux.prototype.comparePassword = function(password, hashPassword, callback) {
    });
 };
 
+//Recibe un password en texto plano y lo devuelve en el callback en forma de hash
+Qux.prototype.cryptPasswordSync = function(password) {
+  return bcrypt.hashSync(password, 10);
+};
+
+//Recibe un password en texto plano y en hash, y devuelve true si coinciden, sino false
+Qux.prototype.comparePasswordSync = function(password, hashPassword) {
+  return bcrypt.compareSync(password, hashPassword);
+};
+
 exports.Qux = Qux;

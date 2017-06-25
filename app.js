@@ -324,24 +324,45 @@ app.post('/login', function(req, res){
 
           var encontrado = false;
           for(var i=0; i<result.length; i++){
-            if (result[i].Id.toLowerCase() === datos.id.toLowerCase() && result[i].Pass === datos.pass){
-              req.session.user = result[i];
+
+            if (result[i].Id.toLowerCase() === datos.id.toLowerCase()){
+
+              //Verificar hash
               encontrado = true;
+              moduloHash.comparePassword(datos.pass, result[i].Pass, function(err, isPasswordMatch){
+                if (err){
+                  console.log("Se produjo un error al intentar validar el password con el valor hash.");
+                  console.log(err);
+
+                  //Enviar un flag de Error
+                  res.setHeader('Content-Type', 'application/json');
+                  res.send(JSON.stringify({ Resultado: 'ERROR'}));
+
+                }else if (isPasswordMatch){
+                  //Password correcto
+                  req.session.user = result[i];
+
+                  //Enviar un flag de Ok
+                  res.setHeader('Content-Type', 'application/json');
+                  res.send(JSON.stringify({ Resultado: 'OK'}));
+
+                }else{
+                  //Enviar un flag de error de autenticación
+                  res.setHeader('Content-Type', 'application/json');
+                  res.send(JSON.stringify({ Resultado: 'NOTFIND'}));
+                }
+
+              });
 
               break;
             }
           }
 
-          if (encontrado){
-              //Enviar un flag de Ok
-              res.setHeader('Content-Type', 'application/json');
-              res.send(JSON.stringify({ Resultado: 'OK'}));
-          }else{
+          if (!encontrado){
             //Enviar un flag de error de autenticación
             res.setHeader('Content-Type', 'application/json');
             res.send(JSON.stringify({ Resultado: 'NOTFIND'}));
           }
-
 
         }
       );
@@ -404,7 +425,7 @@ app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
 
     //En caso de requerir password verificar que esté correcto
     if (datos.oldPass || datos.pass){
-      if (datos.oldPass !== req.session.user.Pass){
+      if (!moduloHash.comparePasswordSync(datos.oldPass, req.session.user.Pass)){
         //Password incorrecto, informar y salir
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify({ Resultado: 'ERRORPASS', Info: "El password actual es incorrecto."}));
@@ -419,6 +440,9 @@ app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
     if (clonDatos.mail) clonDatos.mail = moduloEncriptar.encrypt(clonDatos.mail);
     if (clonDatos.mailDestino) clonDatos.mailDestino = moduloEncriptar.encrypt(clonDatos.mailDestino);
 
+    //Aplicar hash (No reversible) a contraseñas
+    if (clonDatos.pass) clonDatos.pass = moduloHash.cryptPasswordSync(clonDatos.pass);
+
     //Almacenar en la BD
     accesoMongo.ActualizarDatosUsuario(
       function () {
@@ -432,7 +456,7 @@ app.post('/GuardarUsuario', checkAdminRoleAjax, function(req, res){
       clonDatos,
       function (result) {
         //Actualizar datos localmente
-        if (datos.pass) req.session.user.Pass = datos.pass;
+        if (clonDatos.pass) req.session.user.Pass = clonDatos.pass;
         if (datos.mail) req.session.user.Mail = datos.mail;
         if (datos.mailDestino){
           //Actualizar localmente
