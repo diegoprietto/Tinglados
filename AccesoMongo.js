@@ -519,7 +519,6 @@ Qux.prototype.obtenerSolicitudes = function(error, fnDesencriptar, callback) {
 			});
 		}
 	});
-
 }
 
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
@@ -563,7 +562,6 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 			}
 		}
 	});
-
 }
 
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
@@ -697,7 +695,6 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 
 		}
 	});
-
 }
 
 //Almacenamiento de visita de usuario
@@ -792,8 +789,47 @@ Qux.prototype.generarDatosExportacion = function (error, idColeccion, callback) 
 
 		}
 	});
+}
 
+//Función genérica para actualizar algún registro (Update)
+Qux.prototype.actualizarRegistro = function(error, nombreColeccion, jsonFiltro, jsonUpdate, callback) {
 
+	//Conectarse a la BD
+	MongoClient.connect(uri, function(err, db) {
+
+		if (err){
+			//Ocurrió un error
+			if (error) error(err);
+		}else{
+
+		  	//Referenciar a la colección
+			var collection = db.collection(nombreColeccion);
+
+			collection.updateOne(
+				jsonFiltro,
+			    {$set: jsonUpdate},
+			    {},
+			    function(err2, result) {
+
+			    	//Verificar resultado de la actualización
+					if (err){
+						//Ocurrió un error
+						if (error) error(err);
+					}else{
+						//Éxito
+						if (callback) callback(result);
+					}
+
+				    db.close();
+			  	}
+		  	);
+		}
+	});
+}
+
+//Borrar caché de usuario
+Qux.prototype.borrarCacheUsers = function() {
+	cacheColeccionUsers=null;
 }
 
 exports.Qux = Qux;

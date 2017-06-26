@@ -46,6 +46,11 @@ app.use(express.static('public'));
 app.set('view engine', 'pug');
 
 
+//Mensajes standar para el usuario
+var msjErrorServidor = 'Error en el servidor, recargue la página y vuelva a reintentar, si el problema continua contacte al desarrollador para buscar solución al problema.'
+
+
+
 //INICIO Funciones AJAX**************************************************************************************
 
 //Ajax: Telefono
@@ -369,6 +374,96 @@ app.post('/login', function(req, res){
     }
 });
 
+app.post('/loginRestablecer', function(req, res){
+
+    var datos = req.body.content;
+
+    if(!datos || !datos.id){
+        console.log("Login: No se recibieron datos para restablecer");
+        //Enviar un flag de error de autenticación
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify({ RESULTADO: 'INCOMPLETE', MENSAJE: 'Introduzca el usuario.'}));
+    }
+    else{
+
+      accesoMongo.obtenerUsuarios(
+        function () {
+          console.log("Error al intentar obtener la colección Users");
+
+          //Enviar un flag de Error
+          res.setHeader('Content-Type', 'application/json');
+          res.send(JSON.stringify({ RESULTADO: 'ERROR', MENSAJE: msjErrorServidor}));
+
+        },moduloEncriptar.decrypt,
+        function (result) {
+
+          var indice = -1;
+          for(var i=0; i<result.length; i++){
+
+            if (result[i].Id.toLowerCase() === datos.id.toLowerCase()){
+              //Encontrado
+              indice=i;
+              break;
+            }
+          }
+
+          if (indice >= 0){
+            //Encontrado, actualizar pass
+            var nuevaPass = generarClave();
+            var nuevaPassHash = moduloHash.cryptPasswordSync(nuevaPass);
+
+            accesoMongo.actualizarRegistro(
+              function (err){
+                console.log("loginRestablecer: Error al intentar actualizar un registro de Users");
+                console.log(err);
+
+                //Enviar un flag de Error
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify({ RESULTADO: 'ERROR', MENSAJE: msjErrorServidor}));
+              },
+              nombreColeccionUsers,
+              { Id: moduloEncriptar.encrypt(result[indice].Id) },
+              { Pass: nuevaPassHash },
+              function(resultAct){
+
+                //Proceso de envío de mail con la nueva clave generada
+                accesoMail.enviarMailRestablecer(
+                  function () {
+                    console.log("Contacto: Error al intentar enviar mail");
+
+                    //Enviar un flag de Error
+                    res.setHeader('Content-Type', 'application/json');
+                    res.send(JSON.stringify({ RESULTADO: 'ERROR', MENSAJE: msjErrorServidor}));
+                  },
+                  datosMail,
+                  nuevaPass,
+                  result[indice].Mail,
+                  function (resultMailer) {
+
+                    //Borrar caché de usuarios
+                    accesoMongo.borrarCacheUsers();
+
+                    //Enviar un flag de Ok
+                    res.setHeader('Content-Type', 'application/json');
+                    res.send(JSON.stringify({ RESULTADO: 'OK'}));
+                  }
+                );
+
+              }
+            );
+
+
+
+          }else{
+            //Enviar un flag de error de autenticación
+            res.setHeader('Content-Type', 'application/json');
+            res.send(JSON.stringify({ RESULTADO: 'NOTFIND', MENSAJE: 'Usuario no encontrado.'}));
+          }
+
+        }
+      );
+    }
+});
 
 //Solicitud de registros de usuarios que se contactaron por el formulario de Home
 app.get('/ObtenerSolicitudes', checkAdminRoleAjax, function(req, res){
@@ -662,6 +757,7 @@ var server = app.listen(app.get('port'), function () {
 
 //Atributos
 var nombreColeccionDatosMail = "Mail";
+var nombreColeccionUsers = "Users";
 var datosMail = null;
 
 //Determina a partir de los datos de sesión si se tiene permiso de administrador del sitio
@@ -760,6 +856,22 @@ function ContadorVisitas(accion, req, descripcionOpcional){
 //clonar objetos con jQuery
 function clonarObjetoJs (obj) {
     return JSON.parse(JSON.stringify(obj));
+}
+
+//Genera password al azar para restablecer contraseña
+function generarClave(){
+  var lsTexto = ['Pepe', 'Pepito', 'Casa', 'Tormenta', 'Rayo', 'Primavera', 'Rio', 'Copa', 'Sabueso', 'Salchichon',
+  'Cimiento', 'Abeja', 'Touch', 'Singapur', 'Drenaje', 'Carburador', 'Silicio', 'Cordoba', 'Saturno', 'Penal'];
+
+  var indice = getRandomInt(0,20);
+  var numerico = getRandomInt(1000,9999);
+
+  return lsTexto[indice] + numerico;
+}
+
+//Genera un número entero al azar según los límites indicados
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 //Contar Inicio del server

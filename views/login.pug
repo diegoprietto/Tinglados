@@ -5,7 +5,7 @@ block VistaLinks
 	link(href="css/login.css", rel="stylesheet")
 
 block VistaCuerpo
-	form(action="", method="POST", onSubmit="return false;", class="col-sm-6 col-xs-12 col-md-3")
+	form(action="", onSubmit="return false;", class="col-sm-6 col-xs-12 col-md-3")
 		.form-group
 			label(for='id') Usuario
 			input#id.form-control(name="id" type="text" required placeholder="Usuario")
@@ -13,9 +13,22 @@ block VistaCuerpo
 			label(for='pass') Contraseña
 			input#pass.form-control(name="password" type="password" required placeholder="Contraseña")
 		button#init.btn.btn-primary(type="button", onclick="log();") Iniciar Sesión
+		button#btnOlvideMiPw.btn.btn-primary(type="button", onclick="olvideMiPw();", style='display: none;') Olvidé mi Contraseña
+
+	.row.col-sm-12.col-xs-12.col-md-12(style="margin-top: 15px;")
+		form#formRestablecer(action="", onSubmit="return false;", class="col-sm-6 col-xs-12 col-md-3", style="display:none;")
+			span Introduce tu nombre de usuario y presione Restablecer, se enviará una nueva contraseña en el correo que tiene registrado:
+			.form-group
+				label(for='idRestablecer') Usuario
+				input#idRestablecer.form-control(name="id" type="text" required placeholder="Usuario")
+			button#btnRestablecer.btn.btn-primary(type="button", onclick="restablecer();") Restablecer
 
 	.col-sm-12.col-xs-12.col-md-12
 		#AlertError.alert.alert-danger(role='alert', style='display: none;')
 			i.fa.fa-exclamation-triangle(style="margin-right: 5px;")
 			span
 				|Error
+		#AlertOk.alert.alert-success(role='alert', style='display: none;')
+			i.fa.fa-check(style="margin-right: 5px;")
+			span
+				|Éxito

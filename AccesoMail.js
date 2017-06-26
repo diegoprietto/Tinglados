@@ -19,7 +19,7 @@ Qux.prototype.actualizarMailDestino = function(mailDestino){
 	Hacia = mailDestino;
 }
 
-//Envia un correo
+//Envia un correo de solicitud
 Qux.prototype.enviarMail = function (error, datos, callback){
 
 	//Validar que no se envíen excesivos mails en poco tiempo
@@ -62,6 +62,59 @@ Qux.prototype.enviarMail = function (error, datos, callback){
 	    from: Desde,
 	    to: Hacia,
 	    subject: Asunto,
+	    html: contenido
+	};
+
+	//Enviar mail
+	transporter.sendMail(mailOptions, function(err, info){
+	    if (err){
+	        console.log(err);
+	        if (error) error();
+	    } else {
+	        if (callback) callback();
+	    }
+	});
+}
+
+//Envia un correo para restabler password
+Qux.prototype.enviarMailRestablecer = function (error, datosMail, nuevoPassword, mailDestino, callback){
+
+	//Validar que no se envíen excesivos mails en poco tiempo
+	if (ControlFraude.Dia === (new Date()).getDate()){
+		ControlFraude.Contador++;
+
+		//Verificar cantidad enviada
+		if (ControlFraude.Contador > 100){
+			console.log("Warning: Se han recibido demasiados mails en poco tiempo, los próximos consultar en el sitio");
+			if (callback) callback();
+			return;	//No enviar mail
+		}
+	}else{
+		//Inicializar
+		ControlFraude.Dia = (new Date()).getDate();
+		ControlFraude.Contador = 0;
+	}
+
+	//Crear contenido del mail
+	var contenido = "<h3>Solicitud para restablecer la contraseña:</h3>\
+		<h4>Se generó una nueva contraseña para el usuario solicitante, por favor acceda y proceda a cambiarla de inmediato por su seguridad:</h4>\
+		<b>Clave generada:</b> " + nuevoPassword + "<br/>\
+		";
+
+	// Definir el transporter
+	var transporter = nodemailer.createTransport({
+	    service: 'Gmail',
+	    auth: {
+	        user: datosMail.Id + '@gmail.com',
+	        pass: datosMail.Pass
+	    }
+	});
+
+	//Definir mail
+	var mailOptions = {
+	    from: Desde,
+	    to: mailDestino,
+	    subject: "Restablecer contraseña",
 	    html: contenido
 	};
 
