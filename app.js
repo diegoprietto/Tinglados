@@ -49,7 +49,10 @@ app.set('view engine', 'pug');
 //Mensajes standar para el usuario
 var msjErrorServidor = 'Error en el servidor, recargue la página y vuelva a reintentar, si el problema continua contacte al desarrollador para buscar solución al problema.'
 
-
+////Test
+console.log("LEYENDO UURRRRRRRRRRIIIIIIIIIIIIIIIIII");
+var uriBD = (process.env.UriBD || "NO LEIDO");
+console.log(uriBD);
 
 //INICIO Funciones AJAX**************************************************************************************
 
