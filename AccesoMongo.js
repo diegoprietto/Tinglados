@@ -4,7 +4,7 @@ var MongoClient = require('mongodb').MongoClient;
 var MongoDb = require('mongodb');
 var async = require("async");
 
-var uri = "mongodb://dprbd:w8vdLyC0VNhkfhXm@cluster0-shard-00-00-ngi72.mongodb.net:27017,cluster0-shard-00-01-ngi72.mongodb.net:27017,cluster0-shard-00-02-ngi72.mongodb.net:27017/tinglado?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
+var uri = "";
 var nombreColeccionInfo = "Info";
 var nombreColeccionFoto = "Foto";
 var nombreColeccionUsers = "Users";
@@ -22,6 +22,10 @@ var cacheColeccionUsers=null;
 var cacheColeccionCantFotos=null;
 
 var Qux = function () {};
+
+Qux.prototype.asignarUri = function (cadena){
+	uri = cadena;
+}
 
 //Devuelve el texto para la información del pié de página
 Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
