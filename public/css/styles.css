@@ -145,6 +145,16 @@
 	color: red;
 }
 
+#iconoHttps:hover{
+	color: black;
+}
+
+#iconoHttps{
+	margin-right: 5px;
+	color: #F2F2F2;
+	cursor: pointer;
+}
+
 body{
    overflow-x: hidden;
 }
