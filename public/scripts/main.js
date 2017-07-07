@@ -8,6 +8,10 @@ $(document).ready(function () {
 
 	//Inicializar tooltips
 	$('[data-toggle="tooltip"]').tooltip();
+
+	//Inicializar carrousel
+	$('#carrusel').carousel();
+	$("span.glyphicon.glyphicon-chevron-left").trigger("click");	//Parche por defecto en el control
 });
 
 $(window).resize(function () {
