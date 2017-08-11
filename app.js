@@ -34,10 +34,14 @@ var async = require("async");
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 app.use(cookieParser());
-app.use(session({secret: "Datos de Sesion"}));
+app.use(session({
+  secret: "Datos de Sesion",
+  resave: false,
+  saveUninitialized: false
+}));
 
 //Definición de puerto
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 5010));
 
 //Archivos públicos
 app.use(express.static('public'));
