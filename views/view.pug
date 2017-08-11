@@ -79,13 +79,14 @@ html(lang='es-ES')
 						.carousel-inner(role='listbox')
 							- var n = 0;
 							while n < Recursos.CantFotos
+								//- Las imágenes Base64 aquí es una imagen 1x1 pixel transparente para evitar el warning de src que no puede estar vacío
 								if (n==0)
 									.item(style="text-align: center;")
 										span.fa.fa-spinner.fa-spin(style="display: inline-block; margin-top: 100px; font-size: 50px; margin-bottom: 100%")
 										img(
 											alt = '...'
 											style='max-width: initial; display: none'
-											src=''
+											src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 										)
 										.carousel-caption
 								else
@@ -94,7 +95,7 @@ html(lang='es-ES')
 										img(
 											alt = '...'
 											style='max-width: initial; display: inline-block'
-											src=''
+											src='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
 										)
 										.carousel-caption
 								- n++
