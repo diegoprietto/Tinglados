@@ -85,6 +85,7 @@ html(lang='es-ES')
 										img(
 											alt = '...'
 											style='max-width: initial; display: none'
+											src=''
 										)
 										.carousel-caption
 								else
@@ -93,6 +94,7 @@ html(lang='es-ES')
 										img(
 											alt = '...'
 											style='max-width: initial; display: inline-block'
+											src=''
 										)
 										.carousel-caption
 								- n++
@@ -109,7 +111,7 @@ html(lang='es-ES')
 
 					#formulario(style='display: inline-block; position: relative; width: 100%;')
 						.tituloFormulario Complete el formulario por presupuestos. Nos contactaremos a la brevedad.
-						form.form-horizontal.cuerpoFormulario(method='POST', action='', accept-charset='UTF-8', rel='nofollow', onSubmit='return false;')
+						form.form-horizontal.cuerpoFormulario(method='POST', accept-charset='UTF-8', onSubmit='return false;')
 							input(type='hidden', name='_token', value='sWUb6Gq4oi38vjNONW8y1JDU7zh8CjBg5dKz89No')
 							.form-group
 								label.col-sm-12(for='first_name') Nombre
@@ -134,7 +136,7 @@ html(lang='es-ES')
 							.form-group
 								label.col-sm-12(for='message') Mensaje
 								.col-sm-12
-									textarea#message.form-control(cols='', rows='', placeholder='Mensaje', name='message', maxlength='50000')
+									textarea#message.form-control(cols='10', rows='2', placeholder='Mensaje', name='message', maxlength='50000')
 							.form-group
 								.col-sm-12
 									button#ContactButton.btn.btn-warning.botonEnviar(type="button", onclick="Contacto();")
@@ -172,4 +174,3 @@ html(lang='es-ES')
 							
 		.franjaExtra
 			span#iconoManzana.glyphicon.glyphicon-apple.pull-right(aria-hidden='true', onclick="ManzanableInfinite();", onDblClick="ManzanableInfiniteX2();")
-			span#iconoHttps.pull-right.fa.fa-lock(aria-hidden='true', onclick="window.location='https://tinglado.herokuapp.com/';")
