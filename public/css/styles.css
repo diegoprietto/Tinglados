@@ -125,7 +125,8 @@
 	color: #363C9A;
 	text-decoration: none;
 }
-#linkFace:link, #linkFace:visited, #linkFace:active {
+#linkFace:link, #linkFace:visited, #linkFace:active,
+#InfoDesarrollador:link, #InfoDesarrollador:visited, #InfoDesarrollador:active {
     text-decoration: none;
 }
 
@@ -163,13 +164,19 @@ body{
 	color: #b6e4e4;
 }
 
+.fuenteDesarrollador{
+	font-family: 'Lobster', cursive;
+	text-align: center;
+	display: block;
+	color: black;
+}
+
 /* Tamaño XS y SM */
 @media (max-width: 767px) { 
 
 	.fa-question-circle{
 		margin-left: 10px;
 	}
-
 
 }
 

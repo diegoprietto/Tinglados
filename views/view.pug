@@ -21,6 +21,8 @@ html(lang='es-ES')
 
 		link(href="font-awesome-4.7.0/css/font-awesome.min.css", rel="stylesheet")
 
+		link(href='https://fonts.googleapis.com/css?family=Lobster|Sedgwick+Ave+Display', rel='stylesheet')
+
 		link(href="css/styles.css", rel="stylesheet")
 		
 		script(src="scripts/main.js")
@@ -181,4 +183,7 @@ html(lang='es-ES')
 							|Click aquí para llamar
 							
 		.franjaExtra
+			a#InfoDesarrollador.fuenteDesarrollador(href="https://diegoprietto.herokuapp.com/", target="_blank", title="Visitar sitio del desarrollador")
+				|Desarrollado por dprsoft
+				i.fa.fa-lightbulb-o(style="margin-left: 5px")
 			span#iconoManzana.glyphicon.glyphicon-apple.pull-right(aria-hidden='true', onclick="ManzanableInfinite();", onDblClick="ManzanableInfiniteX2();")
