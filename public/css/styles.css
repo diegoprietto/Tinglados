@@ -1,7 +1,19 @@
+body{
+	background: rgba(247,247,247,1);
+	background: -moz-linear-gradient(-45deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
+	background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(247,247,247,1)), color-stop(100%, rgba(166,166,166,1)));
+	background: -webkit-linear-gradient(-45deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
+	background: -o-linear-gradient(-45deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
+	background: -ms-linear-gradient(-45deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
+	background: linear-gradient(135deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#a6a6a6', GradientType=1 );
+	font-family: 'Tangerine', serif !important;
+	text-shadow: 4px 4px 4px #aaa !important;
+}
+
 .cabecera{
 	margin-left: 5%;
 	margin-right: 5%;
-	border: 1px solid #ddecf2;
 	padding-right: 15px;
 	padding-left: 15px;
 	overflow-x: hidden;
@@ -66,7 +78,7 @@
 }
 
 .franjaInferior{
-	background-color: #e4dede;
+	background-color: #787480;
 	width: 100%;
 	padding: 15px 15px 15px 15px;
 	margin-top: 17.5px;
