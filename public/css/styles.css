@@ -7,7 +7,7 @@ body{
 	background: -ms-linear-gradient(-45deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
 	background: linear-gradient(135deg, rgba(247,247,247,1) 0%, rgba(166,166,166,1) 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#a6a6a6', GradientType=1 );
-	font-family: 'Tangerine', serif;
+	font-family: 'Roboto Slab', serif;
 }
 
 .cabecera{
@@ -21,21 +21,24 @@ body{
 .textoSupIzquierdo {
     padding-top: 2.25rem;
     padding-right: 2.25rem;
-    text-align: right;
+	text-align: right;
+	font-family: 'Indie Flower', cursive;
+	font-size: 1.5em;
+	font-weight: bold;
 }
 
 .tituloPrincipal{
 	color: #192561;
 	font-weight: bold;
 	text-align: center;
-	font-size: 3rem;
-	font-family: Arial, sans-serif;
+	font-size: 5rem;
+	font-family: Lora, Arial, sans-serif;
 }
 
 .tituloSecundario{
 	text-align: center;
 	font-size: 1.75rem;
-	font-family: Arial, sans-serif;
+	font-family: Lora, Arial, sans-serif;
 }
 
 .tituloFormulario{
@@ -120,6 +123,11 @@ body{
 .botonLlamar{
 	font-weight: bold;
 	margin-top: 10px;
+	color: #051625 !important;
+}
+
+.botonLlamar a{
+	color: #051625;
 }
 
 .fb-like{
