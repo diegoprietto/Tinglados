@@ -183,6 +183,11 @@ body{
 	color: #b6e4e4;
 }
 
+i.fa-check-circle-o
+{
+	color:#3336b7;
+}
+
 .fuenteDesarrollador{
 	font-family: 'Lobster', cursive;
 	text-align: center;
