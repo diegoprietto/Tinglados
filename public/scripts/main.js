@@ -212,7 +212,7 @@ function CargaInicialFotos(){
 
 function ObtenerFotosOk(response){
 
-	//Buscar propiedad que ontenga la cadena Binario
+	//Buscar propiedad que obtenga la cadena Binario
 	var nombrePropiedad = null;
 	if (response && response.Datos && response.Datos[0]){
 		for (var propiedad in response.Datos[0]){
@@ -229,6 +229,7 @@ function ObtenerFotosOk(response){
 
 
 		//Recorrer fotos
+		switchSplash();
 		$.each(response.Datos, function(index, value){
 
 			try
@@ -270,6 +271,12 @@ function permitirSoloCaracteres(texto, caracteres){
 	return result;
 }
 
+//Hide the splash and show carrousel
+function switchSplash()
+{
+	$("#carruselSplash").hide();
+	$("#carrusel").show();
+}
 
 //******************************************************// Extra
 

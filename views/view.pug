@@ -68,7 +68,10 @@ html(lang='es-ES')
 							i.fa.fa-1_5x.fa-picture-o
 						.botonFlotante(style="display: none;")
 							i.fa.fa-1_5x.fa-map-marker
-					#carrusel.carousel.slide(data-ride='carousel')
+					#carrusel.carousel.slide(
+						data-ride='carousel'
+						style="display: none;"
+					)
 						// Indicators
 						ol.carousel-indicators
 							- var ns = 0;
@@ -116,6 +119,12 @@ html(lang='es-ES')
 						a.right.carousel-control(href='#carrusel', role='button', data-slide='next')
 							span.glyphicon.glyphicon-chevron-right(aria-hidden='true')
 							span.sr-only Siguiente
+					#carruselSplash(style='\
+					overflow: hidden;\
+					max-height: 510px;\
+					margin-bottom: 15px;\
+					')
+						img(alt='', style='overflow: hidden;', src='/social.jpg')
 
 				.col-md-4(style='min-height:485px; padding: 0px 0px 0px 0px; overflow: hidden;')
 
