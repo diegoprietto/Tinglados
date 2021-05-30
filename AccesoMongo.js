@@ -38,14 +38,16 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 	}else{
 
 		//Se conecta a la BD y obtiene los datos
-		MongoClient.connect(uri, function(err, db) {
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 			if (err){
 				//Ocurrió un error
 				if (error) error();
 			}else{
 			  	//Referenciar a la colección
-				var collection = db.collection(nombreColeccionInfo);
+				var instanciaDb = db.db();
+				var collection = instanciaDb.collection(nombreColeccionInfo);
 
 				// Find some documents
 				if (admin){
@@ -81,8 +83,9 @@ Qux.prototype.obtenerInfo = function (error, usarCache, admin, callback) {
 
 Qux.prototype.guardarInfo = function(error, datos, callback) {
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -90,7 +93,8 @@ Qux.prototype.guardarInfo = function(error, datos, callback) {
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionInfo);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionInfo);
 
 			//Eliminar documentos previos
 			collection.drop(function(err, result) {
@@ -132,8 +136,9 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 
 	estructuraDatos.push(datos);
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			console.log("Error al intentar conectar a la BD para guardar fotos");
@@ -142,7 +147,8 @@ Qux.prototype.guardarFoto = function(error, datos, callback) {
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionFoto);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionFoto);
 
 			//Insertar documento
 			collection.insertMany(
@@ -178,8 +184,9 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 
 	var estructuraDatos = { "_id" : new MongoDb.ObjectID(idFoto) };
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -187,7 +194,8 @@ Qux.prototype.borrarFoto = function(error, idFoto, callback) {
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionFoto);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionFoto);
 
 			//Insertar documento
 			collection.deleteOne(
@@ -251,14 +259,16 @@ Qux.prototype.obtenerFotos = function(error, anchoContenedor, callback) {
 	}else{
 
 		//Se conecta a la BD y obtiene los datos
-		MongoClient.connect(uri, function(err, db) {
+		var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+		mongoClient.connect(function(err, db) {
 
 			if (err){
 				//Ocurrió un error
 				if (error) error();
 			}else{
 			  	//Referenciar a la colección
-				var collection = db.collection(nombreColeccionFoto);
+				var instanciaDb = db.db();
+				var collection = instanciaDb.collection(nombreColeccionFoto);
 
 				//Obtener todos los documentos
 				collection.find({},filtroTamanio).toArray(function(err, docs) {
@@ -304,16 +314,18 @@ Qux.prototype.obtenerDatosHome = function (error, callback) {
 
 	}else{
 
-		//Se conecta a la BD y para obtener todos los datos
-		MongoClient.connect(uri, function(err, db) {
+		//Se conecta a la BD y obtiene los datos
+		var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+		mongoClient.connect(function(err, db) {
 
 			if (err){
 				//Ocurrió un error
 				if (error) error(err);
 			}else{
 			  	//Referenciar a las colecciones
-				var collectionInfo = db.collection(nombreColeccionInfo);
-				var collectionFoto = db.collection(nombreColeccionFoto);
+				var instanciaDb = db.db();
+				var collectionInfo = instanciaDb.collection(nombreColeccionInfo);
+				var collectionFoto = instanciaDb.collection(nombreColeccionFoto);
 
 				// Buscar los documentos de info que tengan el flag de mostrar al usuario
 				collectionInfo.find({Mostrar: "S"}).toArray(function(errI, docs) {
@@ -363,14 +375,16 @@ Qux.prototype.obtenerUsuarios = function(error, fnDesencriptar,callback) {
 	}else{
 
 		//Se conecta a la BD y obtiene los datos
-		MongoClient.connect(uri, function(err, db) {
+		var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+		mongoClient.connect(function(err, db) {
 
 			if (err){
 				//Ocurrió un error
 				if (error) error();
 			}else{
 			  	//Referenciar a la colección
-				var collection = db.collection(nombreColeccionUsers);
+				var instanciaDb = db.db();
+				var collection = instanciaDb.collection(nombreColeccionUsers);
 
 				//Obtener todos los documentos
 				collection.find({}).toArray(function(err, docs) {
@@ -401,16 +415,18 @@ Qux.prototype.obtenerUsuarios = function(error, fnDesencriptar,callback) {
 
 //Llamada genérica para obtener el primer dato de una colección a indicar
 Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, fnDesencriptar, callback) {
-
+	
 	//Se conecta a la BD y obtiene los datos
-	MongoClient.connect(uri, function(err, db) {
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
 			if (error) error();
 		}else{
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccion);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccion);
 
 			//Obtener un documento
 			collection.findOne({}, function(err, docs) {
@@ -438,8 +454,9 @@ Qux.prototype.obtenerPrimerDato = function(error, nombreColeccion, fnDesencripta
 //Almacenamiento de solicitud de presupuesto por parte del usuario
 Qux.prototype.guardarSolicitud = function(error, datos, callback) {
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -447,7 +464,8 @@ Qux.prototype.guardarSolicitud = function(error, datos, callback) {
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionSolicitudes);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionSolicitudes);
 			var nuevoRegistro = convertDatosToSolicitudes(datos);
 
 
@@ -491,14 +509,16 @@ function convertDatosToSolicitudes(datosEntrada){
 Qux.prototype.obtenerSolicitudes = function(error, fnDesencriptar, callback) {
 
 	//Se conecta a la BD y obtiene los datos
-	MongoClient.connect(uri, function(err, db) {
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
 			if (error) error(err);
 		}else{
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionSolicitudes);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionSolicitudes);
 
 			//Obtener todos los documentos
 			collection.find({}).sort({Fecha:-1}).toArray(function(err, docs) {
@@ -528,15 +548,17 @@ Qux.prototype.obtenerSolicitudes = function(error, fnDesencriptar, callback) {
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
 Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, callback){
 
-	//Se conecta a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
 			if (error) error(err);
 		}else{
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionSolicitudes);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionSolicitudes);
 
 			//Obtener y actualizar cada uno de los ids
 
@@ -571,8 +593,9 @@ Qux.prototype.ActualizarSolicitudesVistas = function(error, usuario, listaIds, c
 //Actualizar las solicitudes vistas indicadas con el usuario indicado
 Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback){
 
-	//Se conecta a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -586,7 +609,8 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 					//Verificar si se debe actualizar datos del usuario
 					if (datos && (datos.pass || datos.mail)){
 						//Referenciar a la colección
-						var collection = db.collection(nombreColeccionUsers);
+						var instanciaDb = db.db();
+						var collection = instanciaDb.collection(nombreColeccionUsers);
 
 						collection.findOne({ "Id" : usuario }, function(err, doc) {
 
@@ -704,8 +728,10 @@ Qux.prototype.ActualizarDatosUsuario = function(error, usuario, datos, callback)
 //Almacenamiento de visita de usuario
 Qux.prototype.InsertarVisita = function(error, registro, callback) {
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -713,7 +739,8 @@ Qux.prototype.InsertarVisita = function(error, registro, callback) {
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccionVisitas);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccionVisitas);
 
 			//Insertar documento
 			collection.insertMany(
@@ -770,14 +797,16 @@ Qux.prototype.generarDatosExportacion = function (error, idColeccion, callback) 
 	}
 
 	//Se conecta a la BD y obtiene los datos
-	MongoClient.connect(uri, function(err, db) {
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
 			if (error) error(err);
 		}else{
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccion);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccion);
 
 			//Traer todos los datos
 			collection.find({}).toArray(function(err, docs) {
@@ -798,8 +827,9 @@ Qux.prototype.generarDatosExportacion = function (error, idColeccion, callback) 
 //Función genérica para actualizar algún registro (Update)
 Qux.prototype.actualizarRegistro = function(error, nombreColeccion, jsonFiltro, jsonUpdate, callback) {
 
-	//Conectarse a la BD
-	MongoClient.connect(uri, function(err, db) {
+	//Se conecta a la BD y obtiene los datos
+	var mongoClient = new MongoClient(uri, {useUnifiedTopology: true});
+	mongoClient.connect(function(err, db) {
 
 		if (err){
 			//Ocurrió un error
@@ -807,7 +837,8 @@ Qux.prototype.actualizarRegistro = function(error, nombreColeccion, jsonFiltro, 
 		}else{
 
 		  	//Referenciar a la colección
-			var collection = db.collection(nombreColeccion);
+			var instanciaDb = db.db();
+			var collection = instanciaDb.collection(nombreColeccion);
 
 			collection.updateOne(
 				jsonFiltro,
