@@ -10,7 +10,7 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "async": "^2.4.1",
+    "async": "^2.6.4",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.17.1",
     "cookie": "^0.3.1",
